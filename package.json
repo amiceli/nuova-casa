@@ -13,13 +13,14 @@
         "vue-tsc": "^2.2.4"
     },
     "dependencies": {
-        "@amiceli/papierjs": "0.16.0",
         "@biomejs/biome": "2.4.15",
         "@inertiajs/vue3": "^2.3.13",
         "@nanostores/vue": "^1.0.0",
+        "@nordhealth/components": "^5.0.3",
+        "@nordhealth/css": "^5.2.3",
+        "@nordhealth/themes": "^10.0.3",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vueuse/core": "^12.8.2",
-        "@yeger/vue-masonry-wall": "^5.0.21",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "concurrently": "^9.0.1",

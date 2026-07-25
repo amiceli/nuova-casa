@@ -38,15 +38,14 @@
 body {
     padding: 0;
     margin: 0;
-    background: var(--background);
-    color: var(--foreground);
-    font-family:
-        "Instrument Sans",
-        ui-sans-serif,
-        system-ui,
-        sans-serif,
-        "Apple Color Emoji",
-        "Segoe UI Emoji",
-        "Segoe UI Symbol",
-        "Noto Color Emoji";
+    background: var(--n-color-background);
+    font-family: var(--n-font-family);
+}
+
+nord-layout {
+    --n-color-accent-secondary: #310e77;
+}
+
+nord-nav-item {
+    --n-nav-item-background-active: #310e77;
 }
