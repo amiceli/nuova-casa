@@ -8,7 +8,17 @@
         "no": "No",
         "areYouSure": "Are you sure?",
         "createNew": "Create new",
-        "next": "Next"
+        "next": "Next",
+        "irreversible": "This action is permanent and cannot be undone."
+    },
+    "errors": {
+        "tag_name_required": "Give this tag a name.",
+        "tag_name_invalid": "This tag name is invalid.",
+        "tag_name_already_used": "You already have a tag with this name, pick another one.",
+        "tag_icon_required": "Pick an icon for this tag.",
+        "tag_icon_invalid": "This icon is invalid.",
+        "tag_check_failed": "Could not check this tag name, try again.",
+        "tag_save_failed": "Could not create this tag, try again."
     },
     "nav": {
         "dashboard": "Dashboard",
@@ -16,7 +26,11 @@
         "newsletters": "Newsletters",
         "settings": "Settings",
         "profile": "Profile",
-        "appearance": "Appearance"
+        "appearance": "Appearance",
+        "search": "Search",
+        "searchPlaceholder": "Search a link by name or url",
+        "signed_in_as": "Signed in as",
+        "logout": "Sign out"
     },
     "dashboard": {
         "title": "Dashboard",
@@ -27,10 +41,14 @@
         "add": "Add tag",
         "name": "Tag name",
         "namePlaceholder": "tag name is unique",
-        "pageCount": "{count} page(s)",
-        "remove": "remove page",
-        "removeWarn": "This tag and all its pages will be removed.",
-        "confirmDelete": "Yes, delete {name}",
+        "pageCount": "{count} link(s)",
+        "tagCount": "{count} tag(s)",
+        "remove": "Delete tag",
+        "deleteTitle": "Delete the tag \"{name}\"?",
+        "deleteWarn": "The tag \"{name}\" will be deleted, along with the {count} page(s) it contains.",
+        "deleteConfirm": "Delete tag and its pages",
+        "removed": "Tag \"{name}\" deleted",
+        "removeFailed": "Failed to delete tag",
         "created": "New tag created"
     },
     "pages": {
@@ -43,9 +61,14 @@
         "openGraphFailed": "OpenGraph failed, need to set it manually.",
         "scrap": "scrap",
         "changeFavorite": "change favorite",
-        "confirmDelete": "Confirm delete page",
-        "keepIt": "No, I keep it",
-        "removeIt": "Yes, I remove it",
+        "favorite": "Favorite",
+        "favoriteUpdated": "Favorite updated",
+        "favoriteFailed": "Failed to update favorite",
+        "deleteTitle": "Delete this page?",
+        "deleteWarn": "The page \"{title}\" will be removed from the tag \"{tag}\".",
+        "deleteConfirm": "Delete page",
+        "saved": "Link added",
+        "saveFailed": "Could not add this link, try again.",
         "removed": "Page was removed!",
         "removeFailed": "Failed to remove page"
     },
@@ -56,13 +79,23 @@
         "registerAction": "register",
         "urlPlaceholder": "ex : https://jster.net/atom.xml",
         "count": "{count} newsletter(s)",
+        "noLink": "No article fetched",
         "saved": "New page saved",
         "failed": "Something failed"
     },
     "search": {
         "title": "Search result",
-        "foundPages": "Found {count} page(s)",
-        "foundTags": "Found {count} tag(s)",
-        "foundNewsletters": "Found {count} newsletter(s)"
+        "for": "Search: {value}",
+        "foundLinks": "Found {count} link(s)",
+        "emptyTitle": "No link found",
+        "emptyText": "No link matches \"{value}\", neither by name nor by url."
+    },
+    "auth": {
+        "brand": "Casa",
+        "github": "GitHub",
+        "login": "Log in",
+        "loginWithGithub": "Log in with GitHub",
+        "welcomeTitle": "Welcome to Casa",
+        "welcomeSubtitle": "Log in to find your pages, tags and newsletters."
     }
 }

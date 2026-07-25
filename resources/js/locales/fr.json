@@ -8,7 +8,17 @@
         "no": "Non",
         "areYouSure": "Êtes-vous sûr ?",
         "createNew": "Créer",
-        "next": "Suivant"
+        "next": "Suivant",
+        "irreversible": "Cette action est définitive et ne peut pas être annulée."
+    },
+    "errors": {
+        "tag_name_required": "Donnez un nom à ce tag.",
+        "tag_name_invalid": "Ce nom de tag est invalide.",
+        "tag_name_already_used": "Vous avez déjà un tag avec ce nom, choisissez-en un autre.",
+        "tag_icon_required": "Choisissez une icône pour ce tag.",
+        "tag_icon_invalid": "Cette icône est invalide.",
+        "tag_check_failed": "Impossible de vérifier ce nom de tag, réessayez.",
+        "tag_save_failed": "Impossible de créer ce tag, réessayez."
     },
     "nav": {
         "dashboard": "Tableau de bord",
@@ -16,7 +26,11 @@
         "newsletters": "Newsletters",
         "settings": "Paramètres",
         "profile": "Profil",
-        "appearance": "Apparence"
+        "appearance": "Apparence",
+        "search": "Rechercher",
+        "searchPlaceholder": "Rechercher un lien par nom ou url",
+        "signed_in_as": "Connecté en tant que",
+        "logout": "Déconnexion"
     },
     "dashboard": {
         "title": "Tableau de bord",
@@ -27,10 +41,14 @@
         "add": "Ajouter un tag",
         "name": "Nom du tag",
         "namePlaceholder": "le nom du tag doit être unique",
-        "pageCount": "{count} page(s)",
-        "remove": "supprimer la page",
-        "removeWarn": "Ce tag et toutes ses pages seront supprimés.",
-        "confirmDelete": "Oui, supprimer {name}",
+        "pageCount": "{count} lien(s)",
+        "tagCount": "{count} tag(s)",
+        "remove": "Supprimer le tag",
+        "deleteTitle": "Supprimer le tag « {name} » ?",
+        "deleteWarn": "Le tag « {name} » sera supprimé, ainsi que les {count} page(s) qu'il contient.",
+        "deleteConfirm": "Supprimer le tag et ses pages",
+        "removed": "Tag « {name} » supprimé",
+        "removeFailed": "Échec de la suppression du tag",
         "created": "Nouveau tag créé"
     },
     "pages": {
@@ -43,9 +61,14 @@
         "openGraphFailed": "Échec d'OpenGraph, saisissez les infos manuellement.",
         "scrap": "scraper",
         "changeFavorite": "changer le favori",
-        "confirmDelete": "Confirmer la suppression",
-        "keepIt": "Non, je la garde",
-        "removeIt": "Oui, supprimer",
+        "favorite": "Favori",
+        "favoriteUpdated": "Favori mis à jour",
+        "favoriteFailed": "Échec de la mise à jour du favori",
+        "deleteTitle": "Supprimer cette page ?",
+        "deleteWarn": "La page « {title} » sera supprimée du tag « {tag} ».",
+        "deleteConfirm": "Supprimer la page",
+        "saved": "Lien ajouté",
+        "saveFailed": "Impossible d'ajouter ce lien, réessayez.",
         "removed": "Page supprimée !",
         "removeFailed": "Échec de la suppression"
     },
@@ -56,13 +79,23 @@
         "registerAction": "enregistrer",
         "urlPlaceholder": "ex : https://jster.net/atom.xml",
         "count": "{count} newsletter(s)",
+        "noLink": "Aucun article récupéré",
         "saved": "Nouvelle page enregistrée",
         "failed": "Une erreur est survenue"
     },
     "search": {
         "title": "Résultats de recherche",
-        "foundPages": "{count} page(s) trouvée(s)",
-        "foundTags": "{count} tag(s) trouvé(s)",
-        "foundNewsletters": "{count} newsletter(s) trouvée(s)"
+        "for": "Recherche : {value}",
+        "foundLinks": "{count} lien(s) trouvé(s)",
+        "emptyTitle": "Aucun lien trouvé",
+        "emptyText": "Aucun lien ne correspond à « {value} », ni par son nom ni par son url."
+    },
+    "auth": {
+        "brand": "Casa",
+        "github": "GitHub",
+        "login": "Se connecter",
+        "loginWithGithub": "Se connecter avec GitHub",
+        "welcomeTitle": "Bienvenue sur Casa",
+        "welcomeSubtitle": "Connectez-vous pour retrouver vos pages, tags et newsletters."
     }
 }
