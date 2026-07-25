@@ -1,38 +1,55 @@
+import darkThemeUrl from "@nordhealth/themes/lib/nord-dark.css?url"
 import { onMounted, ref } from "vue"
 
-type Appearance = "light" | "dark" | "system"
+export type Appearance = "light" | "dark" | "system"
 
-export function updateTheme(value: Appearance) {
-    if (typeof window === "undefined") {
-        return
+// Nord ships its themes as separate stylesheets, so switching mode means
+// enabling or disabling the dark one through its media attribute...
+const DARK_THEME_LINK_ID = "nord-dark-theme"
+const SYSTEM_DARK_MEDIA = "(prefers-color-scheme: dark)"
+const ALWAYS_MEDIA = "all"
+const NEVER_MEDIA = "not all"
+
+const appearance = ref<Appearance>("system")
+
+const darkThemeLink = () => {
+    const existing = document.getElementById(DARK_THEME_LINK_ID)
+
+    if (existing instanceof HTMLLinkElement) {
+        return existing
     }
 
-    if (value === "system") {
-        const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)")
-        const systemTheme = mediaQueryList.matches ? "dark" : "light"
+    const link = document.createElement("link")
 
-        document.documentElement.classList.toggle("dark", systemTheme === "dark")
-    } else {
-        document.documentElement.classList.toggle("dark", value === "dark")
-    }
+    link.id = DARK_THEME_LINK_ID
+    link.rel = "stylesheet"
+    link.href = darkThemeUrl
+
+    document.head.append(link)
+
+    return link
 }
 
-const setCookie = (name: string, value: string, days = 365) => {
+const darkThemeMedia = (value: Appearance) => {
+    if (value === "dark") {
+        return ALWAYS_MEDIA
+    }
+
+    if (value === "light") {
+        return NEVER_MEDIA
+    }
+
+    return SYSTEM_DARK_MEDIA
+}
+
+const setCookie = (options: { name: string; value: string; days?: number }) => {
     if (typeof document === "undefined") {
         return
     }
 
-    const maxAge = days * 24 * 60 * 60
+    const maxAge = (options.days ?? 365) * 24 * 60 * 60
 
-    document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`
-}
-
-const mediaQuery = () => {
-    if (typeof window === "undefined") {
-        return null
-    }
-
-    return window.matchMedia("(prefers-color-scheme: dark)")
+    document.cookie = `${options.name}=${options.value};path=/;max-age=${maxAge};SameSite=Lax`
 }
 
 const getStoredAppearance = () => {
@@ -43,10 +60,12 @@ const getStoredAppearance = () => {
     return localStorage.getItem("appearance") as Appearance | null
 }
 
-const handleSystemThemeChange = () => {
-    const currentAppearance = getStoredAppearance()
+export function updateTheme(value: Appearance) {
+    if (typeof document === "undefined") {
+        return
+    }
 
-    updateTheme(currentAppearance || "system")
+    darkThemeLink().media = darkThemeMedia(value)
 }
 
 export function initializeTheme() {
@@ -55,18 +74,12 @@ export function initializeTheme() {
     }
 
     // Initialize theme from saved preference or default to system...
-    const savedAppearance = getStoredAppearance()
-    updateTheme(savedAppearance || "system")
-
-    // Set up system theme change listener...
-    mediaQuery()?.addEventListener("change", handleSystemThemeChange)
+    updateTheme(getStoredAppearance() || "system")
 }
-
-const appearance = ref<Appearance>("system")
 
 export function useAppearance() {
     onMounted(() => {
-        const savedAppearance = localStorage.getItem("appearance") as Appearance | null
+        const savedAppearance = getStoredAppearance()
 
         if (savedAppearance) {
             appearance.value = savedAppearance
@@ -80,7 +93,7 @@ export function useAppearance() {
         localStorage.setItem("appearance", value)
 
         // Store in cookie for SSR...
-        setCookie("appearance", value)
+        setCookie({ name: "appearance", value })
 
         updateTheme(value)
     }

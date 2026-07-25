@@ -1,33 +1,36 @@
 <template>
-    <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Appearance settings" />
-
+    <Head :title="t('settings.appearanceTitle')" />
+    <AppLayout :breadcrumbs="breadcrumbs">
         <SettingsLayout>
-            <div class="space-y-6">
-                <p-leaf>
-                    <h3>Appearance</h3>
-                    <small>
-                        Update your account's appearance settings
-                    </small>
-                </p-leaf>
-                <br>
-                <AppearanceTabs />
-            </div>
+            <nord-card>
+                <h2
+                    slot="header"
+                    class="n-typescale-l"
+                >
+                    {{ t('settings.appearanceTitle') }}
+                </h2>
+
+                <nord-stack gap="m">
+                    <p class="n-color-text-weaker">{{ t('settings.appearanceSubtitle') }}</p>
+                    <AppearanceTabs />
+                </nord-stack>
+            </nord-card>
         </SettingsLayout>
     </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { Head } from "@inertiajs/vue3"
-
+import { useI18n } from "vue-i18n"
 import AppearanceTabs from "@/components/AppearanceTabs.vue"
 import AppLayout from "@/layouts/AppLayout.vue"
 import SettingsLayout from "@/layouts/settings/Layout.vue"
 import { type BreadcrumbItem } from "@/types"
 
-const breadcrumbItems: BreadcrumbItem[] = [
+const { t } = useI18n()
+const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: "Appearance settings",
+        title: t("settings.appearanceTitle"),
         href: "/settings/appearance",
     },
 ]
