@@ -1,90 +1,109 @@
 <template>
-    <div class="space-y-6">
-        <p-leaf>
-            <h3>
-                <p-icon icon="warning-box"></p-icon>
-                Delete account
-            </h3>
-        </p-leaf>
-        <p-alert
-            type="danger"
-            dark
+    <nord-card>
+        <h2
+            slot="header"
+            class="n-typescale-l"
         >
-            <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
-                <p class="font-medium">Warning</p>
-                <p class="text-sm">Please proceed with caution, this cannot be undone.</p>
-            </div>
-        </p-alert>
-        <p-modal ref="deleteUserModal">
-            <div slot="title">
-                Are you sure you want to delete your account ?
-            </div>
-            <div slot="text">
-                Once your account is deleted, all of its resources and data will also be permanently
-                deleted. Please enter your
-                password to confirm you would like to permanently delete your account.
-            </div>
-            <p-input-text
-                block
-                label="Confirm"
-                placeholder="username / email"
-                v-model="form.confirmation"
-                :error="form.errors.confirmation"
-            ></p-input-text>
-            <br>
-            <div class="modal__footer">
-                <p-button
-                    :disabled="form.processing"
-                    @click="deleteUserModal.close()"
-                >Cancel</p-button>
-                <p-button
-                    type="danger"
-                    @click="deleteUser()"
-                    :disabled="form.processing"
-                > Delete account </p-button>
-            </div>
-        </p-modal>
-        <p-button
-            type="danger"
-            dark
-            @click="deleteUserModal.open()"
+            {{ t('settings.deleteTitle') }}
+        </h2>
+
+        <nord-banner variant="danger">
+            {{ t('settings.deleteWarn') }}
+        </nord-banner>
+
+        <nord-button
+            slot="footer"
+            variant="danger"
+            @click="openModal()"
         >
-            Delete account
-        </p-button>
-    </div>
+            <nord-icon
+                slot="start"
+                name="interface-delete"
+            ></nord-icon>
+            {{ t('settings.deleteAction') }}
+        </nord-button>
+    </nord-card>
+
+    <nord-modal
+        :open="isOpen"
+        size="s"
+        @close="closeModal()"
+    >
+        <h2 slot="header">{{ t('settings.deleteTitle') }}</h2>
+        <nord-stack gap="m">
+            <p>{{ t('settings.deleteText') }}</p>
+            <p class="n-color-text-weaker n-typescale-s">
+                {{ t('common.irreversible') }}
+            </p>
+            <nord-input
+                expand
+                :label="t('settings.confirmLabel')"
+                :placeholder="expectedConfirmation"
+                :value="form.confirmation"
+                :error="errorMessage"
+                @input="onConfirmationInput($event)"
+            ></nord-input>
+        </nord-stack>
+        <nord-button
+            slot="footer"
+            :disabled="form.processing"
+            @click="closeModal()"
+        >
+            {{ t('common.cancel') }}
+        </nord-button>
+        <nord-button
+            slot="footer"
+            variant="danger"
+            :loading="form.processing"
+            @click="deleteUser()"
+        >
+            {{ t('settings.deleteAction') }}
+        </nord-button>
+    </nord-modal>
 </template>
 
-<script setup lang="ts">
-import {useForm} from "@inertiajs/vue3"
-import {ref} from "vue"
+<script
+    lang="ts"
+    setup
+>
+import { useForm, usePage } from "@inertiajs/vue3"
+import { computed, ref } from "vue"
+import { useI18n } from "vue-i18n"
+import { route } from "ziggy-js"
+import { type User } from "@/types"
 
-const passwordInput = ref<HTMLInputElement | null>(null)
-const deleteUserModal = ref<HTMLElement | null>(null)
-
+const page = usePage()
+const { t } = useI18n()
+const user = page.props.auth.user as User
+const isOpen = ref<boolean>(false)
 const form = useForm({
     confirmation: "",
 })
 
-const deleteUser = () => {
-    form.delete(route("profile.destroy"), {
-        preserveScroll: true,
-        onSuccess: () => closeModal(),
-        onError: () => passwordInput.value?.focus(),
-        onFinish: () => form.reset(),
-    })
+const expectedConfirmation = `${user.name}/${user.email}`
+
+const errorMessage = computed<string>(() =>
+    form.errors.confirmation ? t(`errors.${form.errors.confirmation}`) : "",
+)
+
+function openModal() {
+    isOpen.value = true
 }
 
-const closeModal = () => {
+function closeModal() {
+    isOpen.value = false
     form.clearErrors()
     form.reset()
 }
-</script>
 
-<style scoped>
-    .modal__footer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-    }
-</style>
+function onConfirmationInput(event: Event) {
+    form.confirmation = (event.target as HTMLInputElement).value
+}
+
+function deleteUser() {
+    form.delete(route("profile.destroy"), {
+        preserveScroll: true,
+        onSuccess: () => closeModal(),
+    })
+}
+</script>
