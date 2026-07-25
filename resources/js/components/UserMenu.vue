@@ -17,6 +17,9 @@
             </nord-avatar>
             {{ authUser.name }}
         </nord-button>
+        <nord-dropdown-item :href="profileHref">
+            {{ t('nav.profile') }}
+        </nord-dropdown-item>
         <nord-dropdown-item @click="logout()">
             {{ t('nav.logout') }}
         </nord-dropdown-item>
@@ -42,6 +45,8 @@ const initials = computed<string>(() =>
         .map((part) => part.charAt(0).toUpperCase())
         .join(""),
 )
+
+const profileHref = route("profile.edit")
 
 function logout() {
     router.post(route("logout"))
