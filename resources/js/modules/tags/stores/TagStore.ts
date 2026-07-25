@@ -1,6 +1,7 @@
 import { useForm } from "@inertiajs/vue3"
 import { atom } from "nanostores"
 import { route } from "ziggy-js"
+import { TagError } from "@/modules/domain/Types"
 
 export class TagStore {
     private static instance: TagStore | null
@@ -32,25 +33,34 @@ export class TagStore {
 
     public async saveTag() {
         this.newTag.post(route("create-tag"), {
-            onSuccess: (args) => {
+            onSuccess: () => {
                 this.$status.set("success")
             },
             onError: (args) => {
-                console.error(`action=save_tag, status=failed, reason=${args}`)
+                console.error(`action=save_tag, status=failed, reason=${JSON.stringify(args)}`)
                 this.$status.set("failed")
             },
         })
     }
 
     public async searchIcon() {
-        const tagName = this.newTag.name
+        const tagName = this.newTag.name.trim()
 
         if (!tagName) {
-            this.newTag.errors.name = "Name is required"
+            this.newTag.setError({ name: TagError.NameRequired })
+
             return
         }
 
         this.$inProgress.set(true)
+        this.newTag.clearErrors()
+
+        if (await this.isNameAlreadyUsed(tagName)) {
+            this.$inProgress.set(false)
+
+            return
+        }
+
         const response = await fetch(route(`sear-xng`, { name: tagName }))
         const json: { images: string[] } = await response.json()
 
@@ -71,15 +81,22 @@ export class TagStore {
         this.$status.set("")
     }
 
-    public async savePage() {
-        this.newTag.post(route("create-tag"), {
-            onSuccess: (args) => {
-                this.$status.set("success")
-            },
-            onError: (args) => {
-                this.$status.set("failed")
-            },
-        })
+    private async isNameAlreadyUsed(name: string): Promise<boolean> {
+        try {
+            const response = await fetch(route("tag-name-used", { name }))
+            const json: { used: boolean } = await response.json()
+
+            if (json.used) {
+                this.newTag.setError({ name: TagError.NameAlreadyUsed })
+            }
+
+            return json.used
+        } catch (e) {
+            console.error(`action=check_tag_name, status=failed, reason=${e}`)
+            this.newTag.setError({ name: TagError.CheckFailed })
+
+            return true
+        }
     }
 
     private constructor() {}

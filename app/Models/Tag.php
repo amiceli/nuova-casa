@@ -17,11 +17,18 @@ class Tag extends Model {
                 'icon' => $map->icon,
                 'url' => $map->url,
                 'favorite' => $map->favorite,
+                'created_at' => $map->created_at,
             );
         });
     }
 
     public function pages() {
         return $this->hasMany(Page::class);
+    }
+
+    public static function nameAlreadyUsed(string $name) {
+        return self::where('user_id', auth()->user()->id)
+            ->whereRaw('LOWER(name) = ?', array(mb_strtolower(trim($name))))
+            ->exists();
     }
 }
