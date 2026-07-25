@@ -1,30 +1,25 @@
 <template>
     <Head :title="t('dashboard.title')" />
     <AppLayout :breadcrumbs="breadcrumbs">
-        <p-alert
+        <nord-banner
             v-if="props.pages.length === 0"
+            variant="info"
         >
-            <div class="dashboard__empty">
-                <span>
-                    {{ t('dashboard.empty') }}
-                </span>
-                <AddTagButton :light="true">
-                    {{ t('common.createNew') }}
-                </AddTagButton>
-            </div>
-        </p-alert>
-        <masonry-wall
-            :items="props.pages"
-            :column-width="200"
-            :gap="40"
-        >
-            <template #default="{item}">
-                <PageCard
-                    :page="item"
-                    :key="item.title"
-                />
-            </template>
-        </masonry-wall>
+            {{ t('dashboard.empty') }}
+            <AddTagButton
+                slot="actions"
+                :light="true"
+            >
+                {{ t('common.createNew') }}
+            </AddTagButton>
+        </nord-banner>
+        <div class="n-grid-3 n-gap-m">
+            <PageCard
+                v-for="page in props.pages"
+                :page="page"
+                :key="page.id"
+            />
+        </div>
     </AppLayout>
 </template>
 
@@ -48,16 +43,3 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 </script>
-
-<style scoped>
-    p-alert {
-        max-width: 500px;
-    }
-
-    .dashboard__empty {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap : 15px;
-        align-items: center;
-    }
-</style>
