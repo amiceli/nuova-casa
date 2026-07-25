@@ -18,7 +18,9 @@
         "tag_icon_required": "Choisissez une icône pour ce tag.",
         "tag_icon_invalid": "Cette icône est invalide.",
         "tag_check_failed": "Impossible de vérifier ce nom de tag, réessayez.",
-        "tag_save_failed": "Impossible de créer ce tag, réessayez."
+        "tag_save_failed": "Impossible de créer ce tag, réessayez.",
+        "profile_confirmation_required": "Saisissez la confirmation pour supprimer votre compte.",
+        "profile_confirmation_invalid": "Cette confirmation ne correspond pas à votre nom et votre email."
     },
     "nav": {
         "dashboard": "Tableau de bord",
@@ -89,6 +91,22 @@
         "foundLinks": "{count} lien(s) trouvé(s)",
         "emptyTitle": "Aucun lien trouvé",
         "emptyText": "Aucun lien ne correspond à « {value} », ni par son nom ni par son url."
+    },
+    "settings": {
+        "profileTitle": "Profil",
+        "appearanceTitle": "Apparence",
+        "appearanceSubtitle": "Choisissez le thème de l'application",
+        "theme": "Thème",
+        "themeLight": "Clair",
+        "themeDark": "Sombre",
+        "themeSystem": "Système",
+        "name": "Nom",
+        "email": "Email",
+        "deleteTitle": "Supprimer le compte",
+        "deleteWarn": "Votre compte, vos tags, vos pages et vos newsletters seront définitivement supprimés.",
+        "deleteText": "Pour confirmer, saisissez votre nom et votre email séparés par un « / ».",
+        "deleteAction": "Supprimer mon compte",
+        "confirmLabel": "Confirmation"
     },
     "auth": {
         "brand": "Casa",

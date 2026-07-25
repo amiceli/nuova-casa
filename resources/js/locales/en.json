@@ -18,7 +18,9 @@
         "tag_icon_required": "Pick an icon for this tag.",
         "tag_icon_invalid": "This icon is invalid.",
         "tag_check_failed": "Could not check this tag name, try again.",
-        "tag_save_failed": "Could not create this tag, try again."
+        "tag_save_failed": "Could not create this tag, try again.",
+        "profile_confirmation_required": "Type the confirmation to delete your account.",
+        "profile_confirmation_invalid": "This confirmation does not match your name and email."
     },
     "nav": {
         "dashboard": "Dashboard",
@@ -89,6 +91,22 @@
         "foundLinks": "Found {count} link(s)",
         "emptyTitle": "No link found",
         "emptyText": "No link matches \"{value}\", neither by name nor by url."
+    },
+    "settings": {
+        "profileTitle": "Profile",
+        "appearanceTitle": "Appearance",
+        "appearanceSubtitle": "Pick the theme of the application",
+        "theme": "Theme",
+        "themeLight": "Light",
+        "themeDark": "Dark",
+        "themeSystem": "System",
+        "name": "Name",
+        "email": "Email",
+        "deleteTitle": "Delete account",
+        "deleteWarn": "Your account, tags, pages and newsletters will be permanently deleted.",
+        "deleteText": "To confirm, type your name and your email separated by a \"/\".",
+        "deleteAction": "Delete my account",
+        "confirmLabel": "Confirmation"
     },
     "auth": {
         "brand": "Casa",
