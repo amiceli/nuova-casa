@@ -1,130 +1,137 @@
 <template>
-    <div>
-        <p-modal
-            ref="addPageModal"
-        >
-            <span slot="title">
-                {{ t('pages.addFor', { tag: props.tag.name }) }}
-            </span>
-            <span slot="text">
-                <div class="casa-add-page">
-                    <p-input-text
-                        :label="t('pages.url')"
-                        :placeholder="t('pages.urlPlaceholder')"
-                        required
-                        block
-                        v-model="newPageForm.url"
-                        :disabled="inProgress || requiredInputs"
-                        :error="newPageForm.errors.url"
-                        @input="store.resetState($event.target.value)"
-                    ></p-input-text>
-                    <p-alert
-                        type="warning"
-                        v-if="requiredInputs"
-                    >
-                        {{ t('pages.openGraphFailed') }}
-                    </p-alert>
-                    <div
-                        v-if="requiredInputs"
-                        class="casa-add-page__part"
-                    >
-                        <p-input-text
-                            :label="t('pages.title')"
-                            :placeholder="t('pages.titlePlaceholder')"
-                            required
-                            block
-                            v-model="newPageForm.title"
-                            :disabled="inProgress"
-                            :error="newPageForm.errors.title"
-                        ></p-input-text>
-                        <p-button
-                            :disabled="loadingImages || newPageForm.title.length === 0"
-                            @click="store.requiredInputs(newPageForm.title)"
-                        >
-                            <p-icon icon="reload"></p-icon>
-                        </p-button>
-                    </div>
-                    <div class="modal__list">
-                        <div class="modal__list__loading">
-                            <p-spinner
-                                large
-                                color="var(--secondary-text)"
-                                v-if="loadingImages"
-                            ></p-spinner>
-                        </div>
-                        <masonry-wall
-                            v-if="requiredInputs && !loadingImages"
-                            :items="allImages"
-                            :column-width="200"
-                            :min-columns="3"
-                            :max-columns="3"
-                            :gap="16"
-                        >
-                            <template #default="{item}">
-                                <p-leaf :key="item">
-                                    <img
-                                        :class="{
-                                            'not--selected': newPageForm.icon !== item && newPageForm.icon,
-                                        }"
-                                        :src="item"
-                                        @click="store.setPageIcon(item)"
-                                    />
-                                </p-leaf>
-                            </template>
-                        </masonry-wall>
-                    </div>
+    <nord-modal
+        :open="isOpen"
+        size="s"
+        scrollable
+        @close="isOpen = false"
+    >
+        <h2 slot="header">{{ t('pages.addFor', { tag: props.tag.name }) }}</h2>
 
-                    <div v-if="graphDone && !inProgress">
-                        <hr />
-                        <p-leaf>
-                            <img
-                                class="casa-add-page__image"
-                                :src="newPageForm.icon"
-                                v-if="newPageForm.icon"
-                            />
-                            <img
-                                class="casa-add-page__image"
-                                :src="retroDefault"
-                                v-else
-                            />
-                        </p-leaf>
-                        <p-input-text
-                            :label="t('pages.title')"
-                            block
-                            v-model="newPageForm.title"
-                            :error="newPageForm.errors.title"
-                        ></p-input-text>
-                    </div>
-                </div>
-            </span>
-            <div class="casa-add-page__footer">
-                <p-button @click="addPageModal.close()">
-                    {{ t('common.cancel') }}
-                </p-button>
-                <p-button
-                    type="secondary"
-                    @click="store.openGraph()"
-                    v-if="!graphDone && !requiredInputs"
-                    :loading="inProgress"
+        <nord-stack gap="m">
+            <nord-input
+                :label="t('pages.url')"
+                :placeholder="t('pages.urlPlaceholder')"
+                required
+                expand
+                :value="newPageForm.url"
+                :disabled="inProgress || requiredInputs"
+                :error="newPageForm.errors.url"
+                @input="onUrlInput($event)"
+            ></nord-input>
+
+            <nord-banner
+                variant="warning"
+                v-if="requiredInputs"
+            >
+                {{ t('pages.openGraphFailed') }}
+            </nord-banner>
+
+            <nord-stack
+                v-if="requiredInputs"
+                direction="horizontal"
+                gap="s"
+                align-items="end"
+            >
+                <nord-input
+                    :label="t('pages.title')"
+                    :placeholder="t('pages.titlePlaceholder')"
+                    required
+                    expand
+                    :value="newPageForm.title"
+                    :disabled="inProgress"
+                    :error="newPageForm.errors.title"
+                    @input="onTitleInput($event)"
+                ></nord-input>
+                <nord-button
+                    square
+                    :disabled="loadingImages || newPageForm.title.length === 0"
+                    @click="store.requiredInputs(newPageForm.title)"
                 >
-                    {{ t('pages.scrap') }}
-                </p-button>
-                <p-button
-                    type="success"
-                    @click="store.savePage()"
-                    v-else
-                >
-                    {{ t('common.save') }}
-                </p-button>
+                    <nord-icon
+                        name="arrow-refresh"
+                        :label="t('pages.scrap')"
+                    ></nord-icon>
+                </nord-button>
+            </nord-stack>
+
+            <div
+                class="n-align-center"
+                v-if="loadingImages"
+            >
+                <nord-spinner size="l"></nord-spinner>
             </div>
-        </p-modal>
-        <p-button
-            type="secondary"
-            @click="openModal()"
+
+            <div
+                v-if="requiredInputs && !loadingImages"
+                class="n-grid-3 n-gap-s"
+            >
+                <nord-button
+                    v-for="image in allImages"
+                    :key="image"
+                    :variant="newPageForm.icon === image ? 'primary' : 'default'"
+                    @click="store.setPageIcon(image)"
+                >
+                    <img
+                        class="n-size-icon-l"
+                        :src="image"
+                    />
+                </nord-button>
+            </div>
+
+            <nord-stack
+                gap="m"
+                align-items="start"
+                v-if="graphDone && !inProgress"
+            >
+                <img
+                    class="n-size-icon-xxl"
+                    :src="newPageForm.icon || retroDefault"
+                />
+                <nord-input
+                    :label="t('pages.title')"
+                    expand
+                    :value="newPageForm.title"
+                    :error="newPageForm.errors.title"
+                    @input="onTitleInput($event)"
+                ></nord-input>
+            </nord-stack>
+        </nord-stack>
+
+        <nord-button
+            slot="footer"
+            @click="isOpen = false"
         >
-            {{ t('pages.addNew') }}
-        </p-button>
-    </div>
+            {{ t('common.cancel') }}
+        </nord-button>
+        <nord-button
+            slot="footer"
+            variant="primary"
+            v-if="!graphDone && !requiredInputs"
+            :loading="inProgress"
+            @click="store.openGraph()"
+        >
+            {{ t('pages.scrap') }}
+        </nord-button>
+        <nord-button
+            slot="footer"
+            variant="primary"
+            v-else
+            @click="store.savePage()"
+        >
+            {{ t('common.save') }}
+        </nord-button>
+    </nord-modal>
+
+    <nord-button
+        variant="primary"
+        @click="openModal()"
+    >
+        <nord-icon
+            slot="start"
+            name="interface-add"
+        ></nord-icon>
+        {{ t('pages.addNew') }}
+    </nord-button>
 </template>
 
 <script
@@ -140,86 +147,46 @@ import { usePage } from "../stores/PageStore"
 const { store, inProgress, graphDone, newPageForm, status, requiredInputs, allImages, loadingImages } = usePage()
 const { t } = useI18n()
 
-const addPageModal = ref<HTMLElement | null>(null)
+const isOpen = ref<boolean>(false)
 const props = defineProps<{
     tag: Tag
 }>()
 
 onMounted(() => {
-    const overlay = document.querySelector("p-notification-handler")
+    const overlay = document.querySelector("nord-toast-group")
     store.setTage(props.tag.id)
 
     watch(status, (e: string) => {
         if (e === "failed") {
-            overlay?.pushNotification({
-                type: "danger",
-                canclose: true,
-                timeout: 4000,
-                text: t("newsletters.failed"),
+            overlay?.addToast({
+                variant: "danger",
+                message: t("pages.saveFailed"),
+                autoDismiss: 4000,
             })
         }
         if (e === "success") {
-            overlay?.pushNotification({
-                type: "success",
-                canclose: true,
-                timeout: 4000,
-                text: t("newsletters.saved"),
+            overlay?.addToast({
+                variant: "success",
+                message: t("pages.saved"),
+                autoDismiss: 4000,
             })
-            addPageModal.value.close()
+            isOpen.value = false
         }
     })
 })
 
+function onUrlInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value
+
+    store.resetState(value)
+}
+
+function onTitleInput(event: Event) {
+    newPageForm.title = (event.target as HTMLInputElement).value
+}
+
 function openModal() {
     store.resetState()
-    addPageModal.value.open()
+    isOpen.value = true
 }
 </script>
-
-<style scoped>
-    .casa-add-page {
-        width: 400px;
-
-        p-input-text {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        hr {
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-    }
-
-    .casa-add-page__part {
-        display: grid;
-        grid-template-columns: 1fr 40px;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .casa-add-page__image {
-        height: 100px;
-    }
-
-    .modal__list {
-        margin-top: 10px;
-        max-height: 240px;
-        overflow: scroll;
-    }
-
-    .modal__list__loading {
-        text-align: center;
-    }
-
-    .not--selected {
-        opacity: 0.5;
-    }
-
-    .casa-add-page__footer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-    }
-</style>

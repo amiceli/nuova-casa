@@ -1,170 +1,127 @@
 <template>
-    <div class="casa-add-tag">
-        <p-modal
-            ref="addPageModal"
-        >
-            <span slot="title">
-                {{ t('tags.add') }}
-            </span>
-            <div
-                slot="text"
-                class="tag__modal"
-            >
-                <p-input-text
-                    :label="t('tags.name')"
-                    :placeholder="t('tags.namePlaceholder')"
-                    required
-                    block
-                    v-model="newTagForm.name"
-                    :disabled="inProgress"
-                    :error="newTagForm.errors.name"
-                    @input="tagStore.resetState($event.target.value)"
-                ></p-input-text>
+    <nord-modal
+        :open="isOpen"
+        size="s"
+        scrollable
+        @close="isOpen = false"
+    >
+        <h2 slot="header">{{ t('tags.add') }}</h2>
+        <nord-stack gap="m">
+            <nord-input
+                :label="t('tags.name')"
+                :placeholder="t('tags.namePlaceholder')"
+                required
+                expand
+                :value="newTagForm.name"
+                :disabled="inProgress"
+                :error="errorMessage"
+                @input="onNameInput($event)"
+            ></nord-input>
 
-                <div class="modal__list">
-                    <masonry-wall
-                        v-if="searDone && !inProgress"
-                        :items="allImages"
-                        :column-width="200"
-                        :min-columns="3"
-                        :max-columns="3"
-                        :gap="16"
-                    >
-                        <template #default="{item}">
-                            <p-leaf :key="item">
-                                <img
-                                    :class="{
-                                        'not--selected': newTagForm.icon !== item && newTagForm.icon,
-                                    }"
-                                    :src="item"
-                                    @click="tagStore.setTagIcon(item)"
-                                />
-                            </p-leaf>
-                        </template>
-                    </masonry-wall>
-                </div>
-            </div>
-            <div class="modal__footer">
-                <p-button @click="addPageModal.close()">
-                    {{ t('common.cancel') }}
-                </p-button>
-                <p-button
-                    type="secondary"
-                    @click="!inProgress && tagStore.searchIcon()"
-                    :loading="inProgress"
-                    v-if="!searDone"
+            <div
+                v-if="searDone && !inProgress"
+                class="n-grid-3 n-gap-s"
+            >
+                <nord-button
+                    v-for="image in allImages"
+                    :key="image"
+                    :variant="newTagForm.icon === image ? 'primary' : 'default'"
+                    @click="tagStore.setTagIcon(image)"
                 >
-                    {{ t('common.next') }}
-                    <p-icon icon="next"></p-icon>
-                </p-button>
-                <p-button
-                    type="success"
-                    v-else
-                    @click="tagStore.saveTag()"
-                    :disabled="!newTagForm.icon"
-                >
-                    {{ t('common.save') }} <p-icon icon="save"></p-icon>
-                </p-button>
+                    <img
+                        class="n-size-icon-l"
+                        :src="image"
+                    />
+                </nord-button>
             </div>
-        </p-modal>
-        <p-button
-            type="secondary"
-            :dark="props.light ? undefined : true"
-            @click="openModal()"
+        </nord-stack>
+        <nord-button
+            slot="footer"
+            @click="isOpen = false"
         >
-            <p-icon icon="plus"></p-icon>
-            {{ t('tags.add') }}
-        </p-button>
-    </div>
+            {{ t('common.cancel') }}
+        </nord-button>
+        <nord-button
+            slot="footer"
+            variant="primary"
+            @click="!inProgress && tagStore.searchIcon()"
+            :loading="inProgress"
+            v-if="!searDone"
+        >
+            {{ t('common.next') }}
+        </nord-button>
+        <nord-button
+            slot="footer"
+            variant="primary"
+            v-else
+            @click="tagStore.saveTag()"
+            :disabled="!newTagForm.icon"
+        >
+            {{ t('common.save') }}
+        </nord-button>
+    </nord-modal>
+    <nord-button
+        :variant="props.light ? 'default' : 'primary'"
+        @click="openModal()"
+    >
+        <nord-icon
+            slot="start"
+            name="interface-add"
+        ></nord-icon>
+        {{ t('tags.add') }}
+    </nord-button>
 </template>
 
 <script
     lang="ts"
     setup
 >
-import { onMounted, ref, watch } from "vue"
+import { computed, onMounted, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
+import { TagError } from "@/modules/domain/Types"
 import { useTag } from "../composables/useTag"
 
-const addPageModal = ref<HTMLElement | null>(null)
+const isOpen = ref<boolean>(false)
 const { newTagForm, tagStore, inProgress, searDone, allImages, status } = useTag()
 const { t } = useI18n()
+
+const errorCode = computed<TagError | null>(() => (newTagForm.errors.name ?? newTagForm.errors.icon ?? null) as TagError | null)
+
+const errorMessage = computed<string>(() => (errorCode.value ? t(`errors.${errorCode.value}`) : ""))
 
 const props = defineProps<{ light?: boolean }>()
 
 function openModal() {
     tagStore.resetState()
-    addPageModal.value.open()
+    isOpen.value = true
+}
+
+function onNameInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value
+
+    newTagForm.name = value
+    tagStore.resetState(value)
 }
 
 onMounted(() => {
-    const overlay = document.querySelector("p-notification-handler")
+    const overlay = document.querySelector("nord-toast-group")
 
     watch(status, (e: string) => {
         if (e === "failed") {
-            overlay?.pushNotification({
-                type: "danger",
-                canclose: true,
-                timeout: 4000,
-                text: t("newsletters.failed"),
+            overlay?.addToast({
+                variant: "danger",
+                message: errorMessage.value || t(`errors.${TagError.SaveFailed}`),
+                autoDismiss: 4000,
             })
         }
         if (e === "success") {
-            overlay?.pushNotification({
-                type: "success",
-                canclose: true,
-                timeout: 4000,
-                text: t("tags.created"),
+            overlay?.addToast({
+                variant: "success",
+                message: t("tags.created"),
+                autoDismiss: 4000,
             })
-            addPageModal.value.close()
+            isOpen.value = false
         }
     })
 })
 </script>
-
-<style scoped>
-    .casa-add-tag {
-        display: inline-block;
-
-        p-button p-icon {
-            vertical-align: middle;
-        }
-
-        .not--selected {
-            opacity: 0.5;
-        }
-
-        .modal__colors {
-            display: grid;
-            grid-template-columns: repeat(3, auto);
-            gap: 10px;
-
-            div {
-                height: 40px;
-                width: 100%;
-                text-align: center;
-
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-        }
-
-        .modal__list {
-            margin-top: 10px;
-            max-height: 240px;
-            overflow: scroll;
-        }
-
-        .tag__modal {
-            min-width: 640px;
-        }
-
-        .modal__footer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-    }
-</style>
