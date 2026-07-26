@@ -26,5 +26,6 @@ Easy with just: `just init`
 - [x] Dashboard of favorite bookmarks
 - [x] Search bookmarks by title or URL
 - [x] Add RSS feeds and read their latest article
-- [ ] Search a newsletter
+- [x] Search a newsletter in a catalog filled from [awesome-newsletters](https://github.com/zudochkin/awesome-newsletters)
+- [x] Know if a newsletter is read or unread
 - [ ] Onboarding

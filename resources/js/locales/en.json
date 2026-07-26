@@ -20,7 +20,12 @@
         "tag_check_failed": "Could not check this tag name, try again.",
         "tag_save_failed": "Could not create this tag, try again.",
         "profile_confirmation_required": "Type the confirmation to delete your account.",
-        "profile_confirmation_invalid": "This confirmation does not match your name and email."
+        "profile_confirmation_invalid": "This confirmation does not match your name and email.",
+        "newsletter_url_required": "Give the rss feed url of this newsletter.",
+        "newsletter_already_followed": "You already follow this newsletter.",
+        "newsletter_feed_not_found": "No rss feed found for this newsletter, type it manually.",
+        "newsletter_catalog_load_failed": "Could not load the newsletter list, try again.",
+        "newsletter_save_failed": "Could not add this newsletter, try again."
     },
     "nav": {
         "dashboard": "Dashboard",
@@ -83,7 +88,16 @@
         "count": "{count} newsletter(s)",
         "noLink": "No article fetched",
         "saved": "New page saved",
-        "failed": "Something failed"
+        "failed": "Something failed",
+        "pick": "Newsletter",
+        "pickPlaceholder": "Search a newsletter by name",
+        "noResult": "No newsletter matches",
+        "by": "by {author}",
+        "feedUrl": "RSS feed",
+        "feedHint": "The feed is found automatically, you can fix it.",
+        "feedSearch": "Looking for the rss feed…",
+        "read": "read",
+        "unread": "unread"
     },
     "search": {
         "title": "Search result",

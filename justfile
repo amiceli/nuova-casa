@@ -38,6 +38,15 @@ install dep="":
 artisan *cmd:
   ./vendor/bin/sail artisan {{cmd}}
 
+# Run the scheduled commands, newsletter catalog included
+schedule:
+    ./vendor/bin/sail artisan schedule:work
+
+# Fill the newsletter catalog from the awesome-newsletters repository
+sync_newsletters:
+    ./vendor/bin/sail artisan newsletters:sync-catalog
+    ./vendor/bin/sail artisan newsletters:sync-logos --limit=300
+
 # Open admin
 go_adminer:
     open "http://localhost:8080/?server=pgsql&username=sail&db=laravel"
