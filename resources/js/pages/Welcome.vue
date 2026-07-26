@@ -3,7 +3,18 @@
 
     <nord-layout hide-default-nav-toggle>
         <nord-top-bar slot="top-bar">
-            <strong class="n-typescale-l">{{ t("auth.brand") }}</strong>
+            <nord-stack
+                direction="horizontal"
+                gap="s"
+                align-items="center"
+            >
+                <img
+                    class="brand-logo"
+                    :src="logo"
+                    alt="nuova casa"
+                />
+                <strong class="brand-name n-typescale-l">{{ t("auth.brand") }}</strong>
+            </nord-stack>
             <nord-stack
                 slot="end"
                 direction="horizontal"
@@ -64,6 +75,7 @@
 </template>
 
 <script setup lang="ts">
+import logo from "@assets/casa-logo.webp"
 import { Head } from "@inertiajs/vue3"
 import { useI18n } from "vue-i18n"
 import { route } from "ziggy-js"
@@ -74,3 +86,16 @@ function goToAuth() {
     window.location.assign(route("auth-redirect"))
 }
 </script>
+
+<style scoped>
+.brand-logo {
+    height: 32px;
+    width: 32px;
+    border-radius: var(--n-border-radius);
+    object-fit: cover;
+}
+
+.brand-name {
+    color: #fff;
+}
+</style>
