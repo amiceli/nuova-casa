@@ -20,7 +20,12 @@
         "tag_check_failed": "Impossible de vérifier ce nom de tag, réessayez.",
         "tag_save_failed": "Impossible de créer ce tag, réessayez.",
         "profile_confirmation_required": "Saisissez la confirmation pour supprimer votre compte.",
-        "profile_confirmation_invalid": "Cette confirmation ne correspond pas à votre nom et votre email."
+        "profile_confirmation_invalid": "Cette confirmation ne correspond pas à votre nom et votre email.",
+        "newsletter_url_required": "Indiquez l'url du flux RSS de cette newsletter.",
+        "newsletter_already_followed": "Vous suivez déjà cette newsletter.",
+        "newsletter_feed_not_found": "Aucun flux RSS trouvé pour cette newsletter, saisissez-le à la main.",
+        "newsletter_catalog_load_failed": "Impossible de charger la liste des newsletters, réessayez.",
+        "newsletter_save_failed": "Impossible d'ajouter cette newsletter, réessayez."
     },
     "nav": {
         "dashboard": "Tableau de bord",
@@ -83,7 +88,16 @@
         "count": "{count} newsletter(s)",
         "noLink": "Aucun article récupéré",
         "saved": "Nouvelle page enregistrée",
-        "failed": "Une erreur est survenue"
+        "failed": "Une erreur est survenue",
+        "pick": "Newsletter",
+        "pickPlaceholder": "Cherchez une newsletter par son nom",
+        "noResult": "Aucune newsletter ne correspond",
+        "by": "par {author}",
+        "feedUrl": "Flux RSS",
+        "feedHint": "Le flux est trouvé automatiquement, vous pouvez le corriger.",
+        "feedSearch": "Recherche du flux RSS…",
+        "read": "lu",
+        "unread": "non lue"
     },
     "search": {
         "title": "Résultats de recherche",

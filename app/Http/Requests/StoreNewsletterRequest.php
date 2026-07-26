@@ -28,6 +28,25 @@ class StoreNewsletterRequest extends FormRequest {
                     return $query->where('user_id', auth()->user()->id);
                 }),
             ),
+            'title' => array('nullable', 'string'),
+            'available_newsletter_id' => array(
+                'nullable',
+                'integer',
+                'exists:available_newsletters,id',
+                Rule::unique('newsletters')->where(function ($query) {
+                    return $query->where('user_id', auth()->user()->id);
+                }),
+            ),
+        );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array {
+        return array(
+            'url.unique' => 'newsletter_already_followed',
+            'available_newsletter_id.unique' => 'newsletter_already_followed',
         );
     }
 }

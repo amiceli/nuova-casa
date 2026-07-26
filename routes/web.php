@@ -73,6 +73,12 @@ Route::middleware(array('auth'))
             ->name('rss-list');
         Route::post('/newsletters', 'store')
             ->name('create-rss');
+        Route::get('/api/newsletters/available', 'available')
+            ->name('available-newsletters');
+        Route::get('/api/newsletters/available/{availableNewsletter}/feed', 'feed')
+            ->name('available-newsletter-feed');
+        Route::post('/api/newsletters/{newsletter}/read', 'markAsRead')
+            ->name('read-newsletter');
     });
 
 Route::get('/auth/redirect', function () {
