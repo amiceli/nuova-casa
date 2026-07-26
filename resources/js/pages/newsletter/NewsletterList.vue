@@ -2,40 +2,28 @@
 
     <Head :title="t('newsletters.title')" />
     <AppLayout :breadcrumbs="breadcrumbs">
+        <template #meta>
+            <nord-badge v-if="props.news">
+                {{ t('newsletters.count', { count: props.news.length }) }}
+            </nord-badge>
+        </template>
+        <template #actions>
+            <AddNewsletter />
+        </template>
+
         <WhenVisible data="news">
             <template #fallback>
-                <div class="casa-news__loading">
-                    <p-spinner
-                        color="var(--secondary-text)"
-                        large
-                    ></p-spinner>
+                <div class="n-align-center">
+                    <nord-spinner size="l"></nord-spinner>
                 </div>
             </template>
 
-            <div class="casa-news__head">
-                <p-leaf>
-                    <h3>
-                        {{ t('newsletters.count', { count: props.news.length }) }}
-                    </h3>
-                </p-leaf>
-                <AddNewsletter />
-            </div>
-
-            <div class="casa-news__list">
-                <masonry-wall
-                    :items="props.news"
-                    :column-width="300"
-                    :min-columns="3"
-                    :max-columns="5"
-                    :gap="16"
-                >
-                    <template #default="{item}">
-                        <RssCard
-                            :rss="item"
-                            :key="item.id"
-                        />
-                    </template>
-                </masonry-wall>
+            <div class="n-grid-3 n-gap-m">
+                <RssCard
+                    v-for="item in props.news"
+                    :rss="item"
+                    :key="item.id"
+                />
             </div>
         </WhenVisible>
     </AppLayout>
@@ -66,16 +54,3 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 </script>
-
-<style scoped>
-    .casa-news__head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
-    .casa-news__loading {
-        text-align: center;
-    }
-</style>

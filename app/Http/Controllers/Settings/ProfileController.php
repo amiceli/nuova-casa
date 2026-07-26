@@ -29,9 +29,11 @@ class ProfileController extends Controller {
             'confirmation' => array('required', function ($attribute, $value, $fail) {
                 $expected = auth()->user()->name.'/'.auth()->user()->email;
                 if (trim($value) !== $expected) {
-                    $fail('You should enter <username/email>');
+                    $fail('profile_confirmation_invalid');
                 }
             }),
+        ), array(
+            'confirmation.required' => 'profile_confirmation_required',
         ));
 
         $user = $request->user();

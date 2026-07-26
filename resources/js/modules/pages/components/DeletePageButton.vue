@@ -1,35 +1,42 @@
 <template>
-    <p-modal ref="editModal">
-        <span slot="title">
-            <div class="for__title">{{ props.page.title }}</div>
-        </span>
-        <span slot="sub-title">{{ t('pages.confirmDelete') }}</span>
-        <span slot="text">{{ t('common.areYouSure') }}</span>
-        <p-button
-            type="success"
-            @click="editModal.close()"
-            :disabled="isRemoving"
-        >
-            {{ t('pages.keepIt') }}
-        </p-button>
-        &nbsp;
-        <p-button
-            type="danger"
-            @click="removePage()"
-            :disabled="isRemoving"
-        >
-            <span>{{ t('pages.removeIt') }}</span>
-        </p-button>
-    </p-modal>
-    <p-button
-        @click="editModal.open()"
-        type="danger"
+    <nord-button
+        variant="danger"
+        square
+        @click="openModal()"
     >
-        <p-icon 
-            size="20" 
-            icon="delete"
-        ></p-icon>
-    </p-button>
+        <nord-icon
+            name="interface-delete"
+            :label="t('pages.deleteConfirm')"
+        ></nord-icon>
+    </nord-button>
+    <nord-modal
+        :open="isOpen"
+        size="s"
+        @close="isOpen = false"
+    >
+        <h2 slot="header">{{ t('pages.deleteTitle') }}</h2>
+        <nord-stack gap="s">
+            <p>{{ t('pages.deleteWarn', { title: props.page.title, tag: props.page.parent.name }) }}</p>
+            <p class="n-color-text-weaker n-typescale-s">
+                {{ t('common.irreversible') }}
+            </p>
+        </nord-stack>
+        <nord-button
+            slot="footer"
+            :disabled="isRemoving"
+            @click="isOpen = false"
+        >
+            {{ t('common.cancel') }}
+        </nord-button>
+        <nord-button
+            slot="footer"
+            variant="danger"
+            :loading="isRemoving"
+            @click="removePage()"
+        >
+            {{ t('pages.deleteConfirm') }}
+        </nord-button>
+    </nord-modal>
 </template>
 
 <script
@@ -43,46 +50,38 @@ import { route } from "ziggy-js"
 import { Page } from "@/modules/domain/Types"
 
 const props = defineProps<{ page: Page }>()
-const emit = defineEmits(["remove"])
-const editModal = ref<HTMLElement | null>(null)
+const isOpen = ref<boolean>(false)
 const isRemoving = ref<boolean>(false)
 const { t } = useI18n()
 
+function openModal() {
+    isOpen.value = true
+}
+
 function removePage() {
-    const handler = document.querySelector("p-notification-handler")
+    const handler = document.querySelector("nord-toast-group")
+
+    isRemoving.value = true
 
     router.delete(route("delete-page", { id: props.page.id }), {
         onSuccess: () => {
-            if (handler) {
-                handler.pushNotification({
-                    type: "success",
-                    canclose: true,
-                    text: t("pages.removed"),
-                    timeout: 4000,
-                })
-            }
+            isOpen.value = false
+            handler?.addToast({
+                variant: "success",
+                message: t("pages.removed"),
+                autoDismiss: 4000,
+            })
         },
-        onError: (errors) => {
-            if (handler) {
-                handler.pushNotification({
-                    type: "danger",
-                    canclose: true,
-                    text: t("pages.removeFailed"),
-                    timeout: 4000,
-                })
-            }
+        onError: () => {
+            handler?.addToast({
+                variant: "danger",
+                message: t("pages.removeFailed"),
+                autoDismiss: 4000,
+            })
+        },
+        onFinish: () => {
+            isRemoving.value = false
         },
     })
 }
 </script>
-
-<style scoped>
-    .for__title {
-        display: block;
-        white-space: nowrap;
-        max-width: 400px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding-right: 20px;
-    }
-</style>

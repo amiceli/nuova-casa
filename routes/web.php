@@ -43,6 +43,8 @@ Route::middleware(array('auth'))
             ->name('delete-tag');
         Route::post('/api/tags', 'store')
             ->name('create-tag');
+        Route::get('/api/tags/name-used', 'nameAlreadyUsed')
+            ->name('tag-name-used');
         Route::get('/tags/{tag}', 'show')
             ->name('tag');
     });

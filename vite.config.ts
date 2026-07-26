@@ -17,7 +17,7 @@ export default defineConfig({
                     includeAbsolute: false,
                 },
                 compilerOptions: {
-                    isCustomElement: (tag) => tag.startsWith("p-"),
+                    isCustomElement: (tag) => tag.startsWith("nord-"),
                 },
             },
         }),

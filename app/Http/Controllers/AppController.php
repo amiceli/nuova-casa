@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Newsletter;
 use App\Models\Page;
-use App\Models\Tag;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -73,35 +71,34 @@ class AppController extends Controller {
         }
     }
 
-    private function searchNewsletter(string $search) {
-        return Newsletter::where('user_id', auth()->user()->id)
-            ->where('title', 'LIKE', '%'.$search.'%')
-            ->get()
-            ->map(function ($map) {
-                return array(
-                    'title' => $map->title,
-                    'url' => $map->url,
-                    'lastLink' => $map->getLastLink(),
-                );
-            });
-    }
-
+    /**
+     * Searches user links, on their title or their url.
+     */
     public function search(Request $request) {
-        $search = $request->query('value');
+        $data = $request->validate(array(
+            'value' => array('nullable', 'string'),
+        ));
+        $search = trim($data['value'] ?? '');
+
+        if ($search === '') {
+            return Inertia::render('Search', array(
+                'pages' => array(),
+                'search' => $search,
+            ));
+        }
+
         $pages = Page::where('user_id', auth()->user()->id)
-            ->where('title', 'LIKE', '%'.$search.'%')
+            ->where(function ($query) use ($search) {
+                return $query
+                    ->where('title', 'LIKE', '%'.$search.'%')
+                    ->orWhere('url', 'LIKE', '%'.$search.'%');
+            })
             ->orderBy('created_at', 'asc')
             ->get();
-        $tags = Tag::where('user_id', auth()->user()->id)
-            ->where('name', 'LIKE', '%'.$search.'%')
-            ->orderBy('created_at', 'asc')
-            ->get();
-        $newsletters = $this->searchNewsletter($search);
 
         return Inertia::render('Search', array(
             'pages' => $pages,
-            'tags' => $tags,
-            'newsletters' => $newsletters,
+            'search' => $search,
         ));
     }
 }

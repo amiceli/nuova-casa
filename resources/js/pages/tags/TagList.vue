@@ -1,22 +1,21 @@
 <template>
     <Head :title="t('tags.title')" />
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="casa-tags__head">
+        <template #meta>
+            <nord-badge>
+                {{ t('tags.tagCount', { count: props.tags.length }) }}
+            </nord-badge>
+        </template>
+        <template #actions>
             <AddTagButton />
-        </div>
-        <div class="casa-tags__list">
-            <masonry-wall
-                :items="props.tags"
-                :column-width="200"
-                :gap="16"
-            >
-                <template #default="{item}">
-                    <TagCard
-                        :tag="item"
-                        :key="item.name"
-                    />
-                </template>
-            </masonry-wall>
+        </template>
+
+        <div class="n-grid-3 n-gap-m">
+            <TagCard
+                v-for="tag in props.tags"
+                :tag="tag"
+                :key="tag.name"
+            />
         </div>
     </AppLayout>
 </template>
@@ -28,7 +27,7 @@
 import { Head } from "@inertiajs/vue3"
 import { useI18n } from "vue-i18n"
 import AppLayout from "@/layouts/AppLayout.vue"
-import { Page, Tag } from "@/modules/domain/Types"
+import { Tag } from "@/modules/domain/Types"
 import AddTagButton from "@/modules/tags/components/AddTagButton.vue"
 import TagCard from "@/modules/tags/components/TagCard.vue"
 import { type BreadcrumbItem } from "@/types"
@@ -46,9 +45,3 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 </script>
-
-<style scoped>
-    .casa-tags__head {
-        margin-bottom: 30px;
-    }
-</style>

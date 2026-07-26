@@ -1,68 +1,89 @@
 <template>
-    <p-card
-        :image="props.page.icon.includes('404') ? retroDefault : props.page.icon"
-        radius
-    >
-        <div
-            slot="title"
-            class="for--title"
+    <nord-card padding="l">
+        <nord-stack
+            direction="horizontal"
+            align-items="center"
+            gap="m"
         >
-            <a
-                :href="openPage()"
-                target="_blank"
-            >
-                {{ props.page.title }}
-            </a>
-        </div>
-        <div
+            <img
+                class="n-size-icon-xl"
+                :src="cardImage"
+            />
+            <nord-stack gap="xs">
+                <a
+                    class="n-truncate n-typescale-m n-color-text-link"
+                    :href="openPage()"
+                    target="_blank"
+                >
+                    {{ props.page.title }}
+                </a>
+                <span class="n-color-text-weaker n-typescale-s">
+                    {{ createdAt }}
+                </span>
+            </nord-stack>
+        </nord-stack>
+
+        <Link
             slot="footer"
             v-if="!props.edit"
+            :href="route('tag', {id: props.page.parent.id})"
         >
-            <div class="is--flex">
-                <p-badge>
-                    {{ props.page.parent.name }}
-                </p-badge>
-            </div>
-        </div>
-        <div
-            class="is--flex"
+            <nord-badge>
+                {{ props.page.parent.name }}
+            </nord-badge>
+        </Link>
+
+        <nord-stack
             slot="footer"
-            v-if="edit"
+            v-if="props.edit"
+            direction="horizontal"
+            align-items="center"
+            justify-content="space-between"
         >
-            <p-tooltip
-                bottom
-                :title="t('pages.changeFavorite')"
+            <nord-stack
+                direction="horizontal"
+                gap="s"
+                align-items="center"
             >
-                <p-switch
-                    round
+                <span class="n-color-text-weaker n-typescale-s">
+                    {{ t('pages.favorite') }}
+                </span>
+                <nord-toggle
                     :checked="props.page.favorite"
+                    :label="t('pages.changeFavorite')"
+                    hide-label
                     @change="toggleFavorite()"
-                ></p-switch>
-            </p-tooltip>
-            <div>
-                <DeletePageButton :page="props.page" />
-            </div>
-        </div>
-    </p-card>
+                ></nord-toggle>
+            </nord-stack>
+            <DeletePageButton :page="props.page" />
+        </nord-stack>
+    </nord-card>
 </template>
 
 <script lang="ts" setup>
-import { useForm } from "@inertiajs/vue3"
+import { Link, useForm } from "@inertiajs/vue3"
+import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { route } from "ziggy-js"
+import { useDateFormat } from "@/composables/useDateFormat"
 import { Page } from "@/modules/domain/Types"
 import retroDefault from "../../../../assets/404_retro.png"
 import DeletePageButton from "./DeletePageButton.vue"
 
 const props = defineProps<{ page: Page; edit?: boolean }>()
 const { t } = useI18n()
+const { formatDate } = useDateFormat()
+
+const cardImage = computed(() => (props.page.icon.includes("404") ? retroDefault : props.page.icon))
+
+const createdAt = computed<string>(() => formatDate({ value: props.page.created_at }))
 
 function openPage() {
     return props.page.url.startsWith("https://") ? props.page.url : `https://${props.page.url}`
 }
 
 function toggleFavorite() {
-    const handler = document.querySelector("p-notification-handler")
+    const handler = document.querySelector("nord-toast-group")
 
     const form = useForm({
         favorite: !props.page.favorite,
@@ -71,43 +92,19 @@ function toggleFavorite() {
     form.put(route("update-page", { id: props.page.id }), {
         headers: { Accept: "application/json" },
         onSuccess: () => {
-            if (handler) {
-                handler.pushNotification({
-                    type: "success",
-                    canclose: true,
-                    text: "Page was removed !",
-                    timeout: 4000,
-                })
-            }
+            handler?.addToast({
+                variant: "success",
+                message: t("pages.favoriteUpdated"),
+                autoDismiss: 4000,
+            })
         },
         onError: () => {
-            if (handler) {
-                handler.pushNotification({
-                    type: "danger",
-                    canclose: true,
-                    text: "Failed to remove page",
-                    timeout: 4000,
-                })
-            }
+            handler?.addToast({
+                variant: "danger",
+                message: t("pages.favoriteFailed"),
+                autoDismiss: 4000,
+            })
         },
     })
 }
 </script>
-
-<style scoped>
-    .for--title {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-
-        img {
-            max-height: 50px;
-        }
-    }
-
-    .is--flex {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-</style>

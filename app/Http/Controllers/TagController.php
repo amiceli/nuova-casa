@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Models\Tag;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -16,6 +17,20 @@ class TagController extends Controller {
 
         return Inertia::render('tags/TagList', array(
             'tags' => $tags,
+        ));
+    }
+
+    /**
+     * Tells whether a tag name is already used, so the UI can warn
+     * before the whole creation flow is done.
+     */
+    public function nameAlreadyUsed(Request $request) {
+        $data = $request->validate(array(
+            'name' => array('required', 'string'),
+        ));
+
+        return response()->json(array(
+            'used' => Tag::nameAlreadyUsed($data['name']),
         ));
     }
 

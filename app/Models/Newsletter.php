@@ -17,7 +17,7 @@ class Newsletter extends Model {
             return array(
                 'title' => $f->get_items()[0]->get_title(),
                 'link' => $f->get_items()[0]->get_link(),
-                'date' => $f->get_items()[0]->get_date(),
+                'date' => $f->get_items()[0]->get_date('c'),
             );
         } catch (\Exception $e) {
             return null;

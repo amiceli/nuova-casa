@@ -1,54 +1,41 @@
 <template>
-    <p-card :image="props.tag.icon">
-        <div
-            slot="title"
-            class="for--title"
+    <nord-card padding="l">
+        <nord-stack
+            direction="horizontal"
+            align-items="center"
+            gap="m"
         >
-            {{ props.tag.name }}
-        </div>
-        <div slot="text">
-            <p-badge>
-                {{ t('tags.pageCount', { count: props.tag.children.length }) }}
-            </p-badge>
-        </div>
-        <div
-            class="is--flex"
+            <img
+                class="n-size-icon-xl"
+                :src="props.tag.icon"
+            />
+            <nord-stack gap="xs">
+                <span class="n-truncate n-typescale-m">
+                    {{ props.tag.name }}
+                </span>
+                <span class="n-color-text-weaker n-typescale-s">
+                    {{ t('tags.pageCount', { count: props.tag.children.length }) }}
+                </span>
+            </nord-stack>
+        </nord-stack>
+
+        <Link
             slot="footer"
+            :href="route('tag', {id: props.tag.id})"
         >
-            <Link :href="route('tag', {id: props.tag.id})">
-                <p-button
-                    type="secondary"
-                >
-                    {{ t('common.edit') }}
-                </p-button>
-            </Link>
-        </div>
-    </p-card>
+            <nord-button>
+                {{ t('common.edit') }}
+            </nord-button>
+        </Link>
+    </nord-card>
 </template>
 
 <script lang="ts" setup>
 import { Link } from "@inertiajs/vue3"
 import { useI18n } from "vue-i18n"
+import { route } from "ziggy-js"
 import type { Tag } from "@/modules/domain/Types"
 
 const props = defineProps<{ tag: Tag }>()
 const { t } = useI18n()
 </script>
-
-<style scoped>
-    .for--title {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-
-        img {
-            max-height: 50px;
-        }
-    }
-
-    .is--flex {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-</style>

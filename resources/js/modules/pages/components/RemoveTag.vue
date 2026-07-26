@@ -1,29 +1,44 @@
 <template>
-    <p-button
-        type="danger"
-        @click="deleteTagModal.open()"
+    <nord-button
+        variant="danger"
+        @click="isOpen = true"
     >
+        <nord-icon
+            slot="start"
+            name="interface-delete"
+        ></nord-icon>
         {{ t('tags.remove') }}
-    </p-button>
-    <p-modal ref="deleteTagModal">
-        <div slot="title">
-            {{ t('common.areYouSure') }}
-        </div>
-        <div slot="text">
-            {{ t('tags.removeWarn') }}
-        </div>
-        <div class="modal__footer">
-            <p-button
-                @click="deleteTagModal.close()"
-            >{{ t('common.cancel') }}</p-button>
-            <p-button
-                type="danger"
-                @click="removeTag()"
-            >
-                {{ t('tags.confirmDelete', { name: props.tag.name }) }}
-            </p-button>
-        </div>
-    </p-modal>
+    </nord-button>
+    <nord-modal
+        :open="isOpen"
+        size="s"
+        @close="isOpen = false"
+    >
+        <h2 slot="header">{{ t('tags.deleteTitle', { name: props.tag.name }) }}</h2>
+        <nord-stack gap="s">
+            <p>
+                {{ t('tags.deleteWarn', { name: props.tag.name, count: props.tag.children.length }) }}
+            </p>
+            <p class="n-color-text-weaker n-typescale-s">
+                {{ t('common.irreversible') }}
+            </p>
+        </nord-stack>
+        <nord-button
+            slot="footer"
+            :disabled="isRemoving"
+            @click="isOpen = false"
+        >
+            {{ t('common.cancel') }}
+        </nord-button>
+        <nord-button
+            slot="footer"
+            variant="danger"
+            :loading="isRemoving"
+            @click="removeTag()"
+        >
+            {{ t('tags.deleteConfirm') }}
+        </nord-button>
+    </nord-modal>
 </template>
 
 <script lang="ts" setup>
@@ -33,45 +48,37 @@ import { useI18n } from "vue-i18n"
 import { route } from "ziggy-js"
 import { Tag } from "@/modules/domain/Types"
 
-const deleteTagModal = ref<HTMLElement | null>(null)
+const isOpen = ref<boolean>(false)
+const isRemoving = ref<boolean>(false)
 const props = defineProps<{
     tag: Tag
 }>()
 const { t } = useI18n()
 
 function removeTag() {
-    const handler = document.querySelector("p-notification-handler")
+    const handler = document.querySelector("nord-toast-group")
+
+    isRemoving.value = true
 
     router.delete(route("delete-tag", { id: props.tag.id }), {
         onSuccess: () => {
-            if (handler) {
-                handler.pushNotification({
-                    type: "success",
-                    canclose: true,
-                    text: t("pages.removed"),
-                    timeout: 4000,
-                })
-            }
+            isOpen.value = false
+            handler?.addToast({
+                variant: "success",
+                message: t("tags.removed", { name: props.tag.name }),
+                autoDismiss: 4000,
+            })
         },
         onError: () => {
-            if (handler) {
-                handler.pushNotification({
-                    type: "danger",
-                    canclose: true,
-                    text: t("pages.removeFailed"),
-                    timeout: 4000,
-                })
-            }
+            handler?.addToast({
+                variant: "danger",
+                message: t("tags.removeFailed"),
+                autoDismiss: 4000,
+            })
+        },
+        onFinish: () => {
+            isRemoving.value = false
         },
     })
 }
 </script>
-
-<style scoped>
-    .modal__footer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-    }
-</style>
