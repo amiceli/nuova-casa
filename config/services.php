@@ -41,4 +41,11 @@ return array(
         'redirect' => env('GITHUB_REDIRECT'),
     ),
 
+    'awesome_newsletters' => array(
+        'readme_url' => env(
+            'AWESOME_NEWSLETTERS_README_URL',
+            'https://raw.githubusercontent.com/zudochkin/awesome-newsletters/master/README.md'
+        ),
+    ),
+
 );
