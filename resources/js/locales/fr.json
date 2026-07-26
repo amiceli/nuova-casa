@@ -109,11 +109,11 @@
         "confirmLabel": "Confirmation"
     },
     "auth": {
-        "brand": "Casa",
+        "brand": "nuova casa",
         "github": "GitHub",
         "login": "Se connecter",
         "loginWithGithub": "Se connecter avec GitHub",
-        "welcomeTitle": "Bienvenue sur Casa",
+        "welcomeTitle": "Bienvenue sur nuova casa",
         "welcomeSubtitle": "Connectez-vous pour retrouver vos pages, tags et newsletters."
     }
 }
