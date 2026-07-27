@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class PageSeeder extends Seeder {
     /**
+     * Placeholder until the jobs find something better with SearXNG.
+     */
+    private const FALLBACK_ICON = 'resources/assets/404_retro.png';
+
+    /**
      * Run the database seeds.
      */
     public function run(): void {
@@ -31,7 +36,7 @@ class PageSeeder extends Seeder {
                     'title' => $link['title'],
                     'created_at' => date('Y-m-d H:i:s'),
                     'favorite' => $link['favorite'] ?? false,
-                    'icon' => 'https://www.google.com/s2/favicons?domain='.parse_url($link['url'], PHP_URL_HOST).'&sz=64',
+                    'icon' => self::FALLBACK_ICON,
                     'user_id' => $userId,
                 )
             );

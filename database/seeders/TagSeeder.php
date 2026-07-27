@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class TagSeeder extends Seeder {
     /**
+     * Placeholder until the jobs find something better with SearXNG.
+     */
+    private const FALLBACK_ICON = 'resources/assets/404_retro.png';
+
+    /**
      * Run the database seeds.
      */
     public function run(): void {
@@ -33,19 +38,19 @@ class TagSeeder extends Seeder {
         return array(
             array(
                 'name' => 'Github',
-                'icon' => 'https://www.google.com/s2/favicons?domain=github.com&sz=64',
+                'icon' => self::FALLBACK_ICON,
             ),
             array(
                 'name' => 'Plante pour tous',
-                'icon' => 'https://www.google.com/s2/favicons?domain=plantespourtous.co&sz=64',
+                'icon' => self::FALLBACK_ICON,
             ),
             array(
                 'name' => 'front-end',
-                'icon' => 'https://www.google.com/s2/favicons?domain=vuejs.org&sz=64',
+                'icon' => self::FALLBACK_ICON,
             ),
             array(
                 'name' => 'back-end',
-                'icon' => 'https://www.google.com/s2/favicons?domain=laravel.com&sz=64',
+                'icon' => self::FALLBACK_ICON,
             ),
         );
     }
