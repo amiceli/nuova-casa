@@ -62,3 +62,7 @@ seed:
 # Build front
 build:
     ./vendor/bin/sail npm run build
+
+# Run tests
+tests:
+    ./vendor/bin/pest
