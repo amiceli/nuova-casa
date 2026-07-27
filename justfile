@@ -7,15 +7,27 @@ init:
     ./vendor/bin/sail artisan db:seed
     just run
 
-# run with sail
+# run with sail, vite, the queue worker and the websocket server
 run:
     ./vendor/bin/sail up -d
     tmux new-session -d -s "casa"
     tmux send-keys -t "casa" "just vite" ENTER
+    tmux new-window -t "casa" -n "queue"
+    tmux send-keys -t "casa:queue" "just queue" ENTER
+    tmux new-window -t "casa" -n "reverb"
+    tmux send-keys -t "casa:reverb" "just reverb" ENTER
 
 # Run front with vite
 vite:
   ./vendor/bin/sail npm run dev
+
+# Run the queue worker, the bookmark import runs on it
+queue:
+    ./vendor/bin/sail artisan queue:work --tries=3
+
+# Run the websocket server, it carries the bookmark import progress
+reverb:
+    ./vendor/bin/sail artisan reverb:start --debug
 
 # Lint front code with biome
 biome:
@@ -55,9 +67,18 @@ go_adminer:
 generate:
     ./vendor/bin/sail artisan key:generate
 
-# Seed DB
+# Seed DB, the user ends up with everything set up
 seed:
     ./vendor/bin/sail artisan db:seed
+
+# Seed a user who has never been through the onboarding, their tags, links and
+# newsletters are emptied first. Accounts and the newsletter catalog are kept.
+seed_fresh:
+    ./vendor/bin/sail artisan db:seed --class=FreshUserSeeder
+
+# Seed a user who is done with the onboarding, with tags, links and newsletters
+seed_onboarded:
+    ./vendor/bin/sail artisan db:seed --class=OnboardedUserSeeder
 
 # Build front
 build:
