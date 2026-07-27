@@ -1,6 +1,6 @@
-# nuova casa
+# Nuova casa
 
-<img src="resources/assets/casa-logo.webp" alt="nuova casa logo" width="120" />
+<img src="resources/assets/casa-logo.webp" alt="Nuova casa logo" width="120" />
 
 An opinionated tool for managing bookmarks and newsletters built with Laravel and Vue 3.
 
