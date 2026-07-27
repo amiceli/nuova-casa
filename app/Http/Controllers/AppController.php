@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Services\IconFinder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -20,35 +21,13 @@ class AppController extends Controller {
         ));
     }
 
-    private function searchWord(string $word) {
-        $url = env('SEARXNG_URL');
-
-        $response = Http::withHeaders(array(
-            'User-Agent' => 'Mozilla/5.0',
-        ))->get("$url/search", array(
-            'q' => "$word logo",
-            'categories' => 'images',
-            'format' => 'json',
-        ));
-
-        $imageUrls = array_map(
-            function ($item) {
-                return $item['img_src'];
-            },
-            array_slice($response['results'], 0, 25)
-        );
-
-        return $imageUrls;
-    }
-
-    public function searXng(FormRequest $request) {
+    public function searXng(FormRequest $request, IconFinder $finder) {
         $data = $request->validate(array(
             'name' => array('required', 'string'),
         ));
-        $imageUrls = $this->searchWord($data['name']);
 
         return response()->json(array(
-            'images' => $imageUrls,
+            'images' => $finder->search($data['name']),
         ));
     }
 
