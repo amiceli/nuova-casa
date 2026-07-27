@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\TagController;
 use App\Models\User;
@@ -30,6 +32,28 @@ Route::middleware(array('auth'))
             ->name('proxy');
         Route::get('/search', 'search')
             ->name('search');
+    });
+
+// onboarding
+
+Route::middleware(array('auth'))
+    ->controller(OnboardingController::class)
+    ->group(function () {
+        Route::get('/onboarding', 'show')
+            ->name('onboarding');
+        Route::post('/onboarding/complete', 'complete')
+            ->name('complete-onboarding');
+        Route::post('/api/theme', 'updateTheme')
+            ->name('update-theme');
+    });
+
+// bookmarks import
+
+Route::middleware(array('auth'))
+    ->controller(ImportController::class)
+    ->group(function () {
+        Route::post('/api/bookmarks/import', 'store')
+            ->name('import-bookmarks');
     });
 
 // tags
@@ -77,6 +101,8 @@ Route::middleware(array('auth'))
             ->name('available-newsletters');
         Route::get('/api/newsletters/available/{availableNewsletter}/feed', 'feed')
             ->name('available-newsletter-feed');
+        Route::post('/api/newsletters/follow', 'follow')
+            ->name('follow-newsletters');
         Route::post('/api/newsletters/{newsletter}/read', 'markAsRead')
             ->name('read-newsletter');
     });

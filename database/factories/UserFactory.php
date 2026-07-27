@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Theme;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -25,6 +26,8 @@ class UserFactory extends Factory {
             'github_token' => Str::random(40),
             'github_refresh_token' => Str::random(40),
             'remember_token' => Str::random(10),
+            'theme' => Theme::System,
+            'onboarding_completed_at' => now(),
         );
     }
 
@@ -34,6 +37,15 @@ class UserFactory extends Factory {
     public function unverified(): static {
         return $this->state(fn (array $attributes) => array(
             'email_verified_at' => null,
+        ));
+    }
+
+    /**
+     * Indicate that the user has not gone through the onboarding yet.
+     */
+    public function onboarding(): static {
+        return $this->state(fn (array $attributes) => array(
+            'onboarding_completed_at' => null,
         ));
     }
 }

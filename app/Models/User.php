@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Theme;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -25,6 +25,8 @@ class User extends Authenticatable {
         'avatar',
         'github_token',
         'github_refresh_token',
+        'theme',
+        'onboarding_completed_at',
     );
 
     /**
@@ -46,20 +48,23 @@ class User extends Authenticatable {
         return array(
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'theme' => Theme::class,
+            'onboarding_completed_at' => 'datetime',
         );
     }
 
-    // public function getNewsletters()
-    // {
-    //     return $this->newsletters()->map(function ($map) {
-    //         return array(
-    //             "id" => $map->id,
-    //             "title" => $map->title,
-    //             "url" => $map->url,
-    //             "lastLink" => $map->getLastLink(),
-    //         );
-    //     });
-    // }
+    /**
+     * A user goes through the onboarding once, right after their first login.
+     */
+    public function hasCompletedOnboarding(): bool {
+        return $this->onboarding_completed_at !== null;
+    }
+
+    public function completeOnboarding(): void {
+        $this->onboarding_completed_at = now();
+
+        $this->save();
+    }
 
     public function pages() {
         return $this->hasMany(Page::class);
