@@ -11,9 +11,7 @@ class DatabaseSeeder extends Seeder {
      */
     public function run(): void {
         $this->call(array(
-            TagSeeder::class,
-            PageSeeder::class,
-            NewsletterSeeder::class,
+            OnboardedUserSeeder::class,
         ));
     }
 }
