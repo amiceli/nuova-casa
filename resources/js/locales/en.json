@@ -121,13 +121,5 @@
         "deleteText": "To confirm, type your name and your email separated by a \"/\".",
         "deleteAction": "Delete my account",
         "confirmLabel": "Confirmation"
-    },
-    "auth": {
-        "brand": "nuova casa",
-        "github": "GitHub",
-        "login": "Log in",
-        "loginWithGithub": "Log in with GitHub",
-        "welcomeTitle": "Welcome to nuova casa",
-        "welcomeSubtitle": "Log in to find your pages, tags and newsletters."
     }
 }
