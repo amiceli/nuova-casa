@@ -47,7 +47,6 @@ import SettingsLayout from "@/layouts/settings/Layout.vue"
 import { type BreadcrumbItem, type User } from "@/types"
 
 interface Props {
-    mustVerifyEmail: boolean
     status?: string
 }
 
