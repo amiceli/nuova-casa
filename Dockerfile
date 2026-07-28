@@ -7,15 +7,20 @@ RUN npm install
 
 COPY . .
 RUN npm run build
+RUN ls
 
-FROM dunglas/frankenphp:1.12-php8.4
+FROM unit:1.34.1-php8.4
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl unzip git \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install -y \
+    curl unzip git libicu-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libssl-dev libpq-dev
 
-RUN install-php-extensions \
-    pcntl opcache pdo_mysql pdo_pgsql pgsql intl zip gd exif ftp bcmath redis
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+
+RUN docker-php-ext-install -j$(nproc) pcntl opcache pdo pdo_mysql intl zip gd exif ftp bcmath
+
+RUN docker-php-ext-install -j$(nproc) pdo_pgsql pgsql
+
+RUN pecl install redis && docker-php-ext-enable redis
 
 RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/custom.ini \
     && echo "opcache.jit=tracing" >> /usr/local/etc/php/conf.d/custom.ini \
@@ -26,18 +31,24 @@ RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/custom.ini \
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-WORKDIR /app
+WORKDIR /var/www/html
+
+RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache
+
+RUN chown -R unit:unit /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 COPY . .
 
-COPY --from=builder /app/public/build /app/public/build
+COPY --from=builder /app/public/build /var/www/html/public/build
+
+RUN chown -R unit:unit storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 RUN composer install --prefer-dist --optimize-autoloader --no-interaction
 
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
-
-# caddy serves /app/public on plain http, the proxy in front terminates the tls
-ENV SERVER_NAME=:8000
+COPY unit.json /docker-entrypoint.d/unit.json
 
 EXPOSE 8000
+
+CMD ["unitd", "--no-daemon"]
