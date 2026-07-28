@@ -2,7 +2,7 @@
     <Head :title="t('dashboard.title')" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <nord-banner
-            v-if="props.pages.length === 0"
+            v-if="isAccountEmpty"
             variant="info"
         >
             {{ t('dashboard.empty') }}
@@ -11,6 +11,13 @@
             <div slot="actions">
                 <AddTagButton :light="true" />
             </div>
+        </nord-banner>
+
+        <nord-banner
+            v-if="hasNoFavorite"
+            variant="info"
+        >
+            {{ t('dashboard.noFavorite') }}
         </nord-banner>
         <div class="n-grid-3 n-gap-m">
             <PageCard
@@ -24,6 +31,7 @@
 
 <script setup lang="ts">
 import { Head } from "@inertiajs/vue3"
+import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import AppLayout from "@/layouts/AppLayout.vue"
 import { Page } from "@/modules/domain/Types"
@@ -33,8 +41,14 @@ import { type BreadcrumbItem } from "@/types"
 
 const props = defineProps<{
     pages: Page[]
+    hasTags: boolean
 }>()
 const { t } = useI18n()
+
+const isAccountEmpty = computed<boolean>(() => !props.hasTags)
+
+/** they have something to browse, they just never starred anything */
+const hasNoFavorite = computed<boolean>(() => props.hasTags && props.pages.length === 0)
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: t("dashboard.title"),
