@@ -1,12 +1,9 @@
 <?php
 
-use App\Jobs\FindPageIcon;
-use App\Jobs\FindTagIcon;
 use App\Models\Page;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Bus;
 
 function bookmarksFile(): UploadedFile {
     return UploadedFile::fake()->createWithContent(
@@ -23,8 +20,6 @@ function importBookmarks(User $user) {
 }
 
 test('the folders of an export become tags, and the links land in them', function () {
-    Bus::fake();
-
     $user = User::factory()->create();
 
     importBookmarks($user)->assertStatus(200);
@@ -44,9 +39,7 @@ test('the folders of an export become tags, and the links land in them', functio
         ->toContain('https://vite.dev');
 });
 
-test('an import answers with what it created before looking for any icon', function () {
-    Bus::fake();
-
+test('an import answers with what it created', function () {
     $user = User::factory()->create();
 
     $response = importBookmarks($user);
@@ -56,42 +49,22 @@ test('an import answers with what it created before looking for any icon', funct
         'tags' => 17,
         'pages' => 55,
         'skipped' => 0,
-        'total' => 72,
     ));
 });
 
-test('every imported tag and link gets a job looking for its icon', function () {
-    Bus::fake();
-
-    $user = User::factory()->create();
-
-    importBookmarks($user);
-
-    Bus::assertBatched(function ($batch) {
-        $tagJobs = $batch->jobs->filter(fn ($job) => $job instanceof FindTagIcon);
-        $pageJobs = $batch->jobs->filter(fn ($job) => $job instanceof FindPageIcon);
-
-        return $tagJobs->count() === 17 && $pageJobs->count() === 55;
-    });
-});
-
 test('an import can be replayed without doubling anything', function () {
-    Bus::fake();
-
     $user = User::factory()->create();
 
     importBookmarks($user);
     $response = importBookmarks($user);
 
-    $response->assertJson(array('tags' => 0, 'pages' => 0, 'total' => 0));
+    $response->assertJson(array('tags' => 0, 'pages' => 0));
 
     expect(Tag::where('user_id', $user->id)->count())->toBe(17)
         ->and(Page::where('user_id', $user->id)->count())->toBe(55);
 });
 
 test('two users importing the same bookmarks keep their own tags', function () {
-    Bus::fake();
-
     $first = User::factory()->create();
     $second = User::factory()->create();
 
@@ -103,8 +76,6 @@ test('two users importing the same bookmarks keep their own tags', function () {
 });
 
 test('a file holding no bookmark is turned down', function () {
-    Bus::fake();
-
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->postJson(route('import-bookmarks'), array(
@@ -115,7 +86,7 @@ test('a file holding no bookmark is turned down', function () {
     $response->assertStatus(422);
     $response->assertJsonPath('errors.bookmarks.0', 'import_no_bookmark_found');
 
-    Bus::assertNothingBatched();
+    expect(Tag::where('user_id', $user->id)->count())->toBe(0);
 });
 
 test('a file that is not an export is turned down', function () {

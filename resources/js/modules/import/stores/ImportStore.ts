@@ -2,13 +2,11 @@ import { router } from "@inertiajs/vue3"
 import { atom } from "nanostores"
 import { route } from "ziggy-js"
 import { postForm } from "@/lib/http"
-import { ImportError, type ImportProgress, type ImportResult, type StartedImport } from "@/modules/domain/Types"
+import { ImportError, type ImportResult } from "@/modules/domain/Types"
 
 export enum ImportStep {
     Idle = "idle",
     Uploading = "uploading",
-    /** tags and links are saved, the jobs are looking for their icons */
-    Running = "running",
     Done = "done",
 }
 
@@ -24,9 +22,7 @@ export class ImportStore {
 
     public readonly $error = atom<ImportError | null>(null)
 
-    public readonly $started = atom<StartedImport | null>(null)
-
-    public readonly $done = atom<number>(0)
+    public readonly $result = atom<ImportResult | null>(null)
 
     public static get(): ImportStore {
         if (!ImportStore.instance) {
@@ -36,6 +32,7 @@ export class ImportStore {
         return ImportStore.instance
     }
 
+    /** the whole import happens in that single call */
     public async startImport(params: StartImportParams) {
         this.resetState()
         this.$step.set(ImportStep.Uploading)
@@ -54,44 +51,22 @@ export class ImportStore {
                 return
             }
 
-            const started: StartedImport = await response.json()
+            const result: ImportResult = await response.json()
 
-            this.$started.set(started)
+            this.$result.set(result)
+            this.$step.set(ImportStep.Done)
 
-            // nothing left to look for, no job will ever report back
-            this.$step.set(started.total === 0 ? ImportStep.Done : ImportStep.Running)
+            router.reload()
         } catch (e) {
             console.error(`action=import_bookmarks, status=failed, reason=${e}`)
             this.failWith(ImportError.UploadFailed)
         }
     }
 
-    /** a job is over, it says how many of them are */
-    public onProgress(progress: ImportProgress) {
-        if (progress.importId !== this.$started.get()?.importId) {
-            return
-        }
-
-        this.$done.set(progress.done)
-    }
-
-    /** every icon has been looked for, the lists are worth reloading */
-    public onFinished(result: ImportResult) {
-        if (result.importId !== this.$started.get()?.importId) {
-            return
-        }
-
-        this.$step.set(ImportStep.Done)
-        this.$done.set(this.$started.get()?.total ?? 0)
-
-        router.reload()
-    }
-
     public resetState() {
         this.$step.set(ImportStep.Idle)
         this.$error.set(null)
-        this.$started.set(null)
-        this.$done.set(0)
+        this.$result.set(null)
     }
 
     private failWith(error: ImportError) {

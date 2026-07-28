@@ -51,7 +51,8 @@
     },
     "dashboard": {
         "title": "Dashboard",
-        "empty": "Your tag list is empty"
+        "empty": "Your tag list is empty",
+        "noFavorite": "None of your links is a favorite yet, star one to see it here"
     },
     "tags": {
         "title": "Tags",
@@ -153,11 +154,11 @@
     "import": {
         "title": "Import your bookmarks",
         "help": "Export your bookmarks from your browser as an HTML file, then drop it here. Your folders become tags and your links land in them.",
+        "iconsLater": "Your tags and links start with a placeholder icon. A weekly task looks for a better one, so they fill in on their own over the following days.",
         "defaultTag": "Bookmarks",
         "pickFile": "Pick a file",
         "noFile": "No file picked",
         "start": "Import",
-        "searchingIcons": "Looking for icons… {done} / {total} ({percent}%)",
         "done": "Import over: {tags} tag(s) and {pages} link(s) added.",
         "skipped": "{count} link(s) skipped, their address was too long."
     },

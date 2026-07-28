@@ -4,6 +4,10 @@
             {{ t('import.help') }}
         </p>
 
+        <p class="n-color-text-weaker n-typescale-s">
+            {{ t('import.iconsLater') }}
+        </p>
+
         <nord-banner
             v-if="errorMessage"
             variant="danger"
@@ -23,7 +27,6 @@
             direction="horizontal"
             gap="m"
             align-items="center"
-            v-if="!isRunning"
         >
             <nord-button @click="pickFile()">
                 {{ t('import.pickFile') }}
@@ -33,30 +36,18 @@
             </span>
         </nord-stack>
 
-        <nord-stack
-            direction="horizontal"
-            gap="m"
-            align-items="center"
-            v-if="isRunning"
-        >
-            <nord-spinner size="s"></nord-spinner>
-            <span class="n-typescale-s">
-                {{ t('import.searchingIcons', { done, total: started?.total ?? 0, percent }) }}
-            </span>
-        </nord-stack>
-
         <nord-banner
-            v-if="isDone && started"
+            v-if="isDone && result"
             variant="success"
         >
-            {{ t('import.done', { tags: started.tags, pages: started.pages }) }}
+            {{ t('import.done', { tags: result.tags, pages: result.pages }) }}
         </nord-banner>
 
         <nord-banner
-            v-if="isDone && started && started.skipped > 0"
+            v-if="isDone && result && result.skipped > 0"
             variant="warning"
         >
-            {{ t('import.skipped', { count: started.skipped }) }}
+            {{ t('import.skipped', { count: result.skipped }) }}
         </nord-banner>
 
         <nord-stack
@@ -80,35 +71,25 @@
     lang="ts"
     setup
 >
-import { usePage } from "@inertiajs/vue3"
 import { computed, onMounted, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { ImportError } from "@/modules/domain/Types"
 import { useImport } from "@/modules/import/composables/useImport"
-import { useImportChannel } from "@/modules/import/composables/useImportChannel"
 import { ImportStep } from "@/modules/import/stores/ImportStore"
-import type { User } from "@/types"
 
-const page = usePage()
 const { t } = useI18n()
-const { store, step, error, started, done, percent } = useImport()
+const { store, step, error, result } = useImport()
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const file = ref<File | null>(null)
-
-const user = page.props.auth.user as User
-
-useImportChannel(user.id)
 
 const fileName = computed<string>(() => file.value?.name ?? "")
 
 const isUploading = computed<boolean>(() => step.value === ImportStep.Uploading)
 
-const isRunning = computed<boolean>(() => step.value === ImportStep.Running)
-
 const isDone = computed<boolean>(() => step.value === ImportStep.Done)
 
-const canImport = computed<boolean>(() => file.value !== null && !isUploading.value && !isRunning.value)
+const canImport = computed<boolean>(() => file.value !== null && !isUploading.value)
 
 const errorMessage = computed<string>(() => (error.value ? t(`errors.${error.value}`) : ""))
 
@@ -148,8 +129,8 @@ onMounted(() => {
         }
 
         const message = t("import.done", {
-            tags: started.value?.tags ?? 0,
-            pages: started.value?.pages ?? 0,
+            tags: result.value?.tags ?? 0,
+            pages: result.value?.pages ?? 0,
         })
 
         overlay?.addToast(message, {

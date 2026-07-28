@@ -49,27 +49,13 @@ export enum ThemeError {
 }
 
 /**
- * What the server answers once the tags and the links are in place, the icons
- * are still being looked for at that point.
+ * What the server answers once the tags and the links are in place, their
+ * icons are looked for later by the weekly command.
  */
-export type StartedImport = {
-    importId: string
+export type ImportResult = {
     tags: number
     pages: number
     skipped: number
-    total: number
-}
-
-export type ImportProgress = {
-    importId: string
-    done: number
-    total: number
-}
-
-export type ImportResult = {
-    importId: string
-    tags: number
-    pages: number
 }
 
 export enum NewsletterError {

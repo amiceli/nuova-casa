@@ -51,7 +51,8 @@
     },
     "dashboard": {
         "title": "Tableau de bord",
-        "empty": "Votre liste de tags est vide"
+        "empty": "Votre liste de tags est vide",
+        "noFavorite": "Aucun de vos liens n'est en favori, mettez-en un en favori pour le voir ici"
     },
     "tags": {
         "title": "Tags",
@@ -153,11 +154,11 @@
     "import": {
         "title": "Importer vos favoris",
         "help": "Exportez vos favoris depuis votre navigateur au format HTML, puis déposez le fichier ici. Vos dossiers deviennent des tags et vos liens sont rangés dedans.",
+        "iconsLater": "Vos tags et vos liens démarrent avec une icône par défaut. Une tâche hebdomadaire en cherche une meilleure, elles se remplissent donc toutes seules les jours suivants.",
         "defaultTag": "Favoris",
         "pickFile": "Choisir un fichier",
         "noFile": "Aucun fichier choisi",
         "start": "Importer",
-        "searchingIcons": "Recherche des icônes… {done} / {total} ({percent} %)",
         "done": "Import terminé : {tags} tag(s) et {pages} lien(s) ajoutés.",
         "skipped": "{count} lien(s) ignoré(s), leur adresse était trop longue."
     },
