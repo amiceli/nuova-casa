@@ -8,10 +8,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// the awesome-newsletters README moves slowly, a monthly read is enough
 Schedule::command('newsletters:sync-catalog')
-    ->weeklyOn(1, '03:00')
+    ->monthlyOn(1, '03:00')
     ->withoutOverlapping();
 
+// the day after the catalog, the logos it added are the ones to look for
 Schedule::command('newsletters:sync-logos --limit=50')
-    ->hourly()
+    ->monthlyOn(2, '03:00')
     ->withoutOverlapping();
