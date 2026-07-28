@@ -9,6 +9,7 @@ use App\Models\AvailableNewsletter;
 use App\Models\Newsletter;
 use App\Services\SiteMetadataFinder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Vedmant\FeedReader\Facades\FeedReader;
 
@@ -86,6 +87,7 @@ class NewsletterController extends Controller {
         $data = (object) $request->validated();
         $userId = auth()->user()->id;
         $followed = 0;
+        $skipped = 0;
 
         foreach (AvailableNewsletter::whereIn('id', $data->ids)->get() as $available) {
             $feedUrl = $this->feedUrlOf(array(
@@ -93,7 +95,15 @@ class NewsletterController extends Controller {
                 'finder' => $finder,
             ));
 
+            // a catalog entry whose feed cannot be found is unfollowable
             if (! $feedUrl) {
+                Log::warning('action=follow_newsletter, status=skipped, reason=no_feed', array(
+                    'id' => $available->id,
+                    'name' => $available->name,
+                ));
+
+                $skipped++;
+
                 continue;
             }
 
@@ -121,6 +131,7 @@ class NewsletterController extends Controller {
         }
 
         return response()->json(array(
+            'skipped' => $skipped,
             'followed' => $followed,
         ));
     }

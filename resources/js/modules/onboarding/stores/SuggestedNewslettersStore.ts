@@ -32,10 +32,13 @@ export class SuggestedNewslettersStore {
         await AddNewsletterStore.get().loadCatalog()
     }
 
-    /** the ones with a logo and a description come first */
+    /**
+     * Only the ones with a known feed, following the others fails. The ones
+     * with a logo and a description come first.
+     */
     public suggestions(catalog: AvailableNewsletter[]): AvailableNewsletter[] {
         return [...catalog]
-            .filter((item) => !item.followed)
+            .filter((item) => !item.followed && item.feedUrl !== null)
             .sort((first, second) => this.appeal(second) - this.appeal(first))
             .slice(0, SuggestedNewslettersStore.SUGGESTION_COUNT)
     }
