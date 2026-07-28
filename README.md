@@ -41,29 +41,17 @@ Copy `.env.example` to `.env`, defaults are fine except for these:
 | `GITHUB_CLIENT_SECRET` | Client secret of the same app |
 | `GITHUB_REDIRECT` | OAuth callback, `http://localhost/auth/callback` in local |
 | `SEARXNG_URL` | [SearXNG](https://docs.searxng.org/) instance, searches bookmark icons |
-| `BROADCAST_CONNECTION` | `reverb`, anything else drops the import progress |
-| `REVERB_APP_ID` | Websocket app id, any value |
-| `REVERB_APP_KEY` | Websocket key, shared with the browser |
-| `REVERB_APP_SECRET` | Websocket secret, server side only |
-| `REVERB_HOST` | Host the browser connects to |
-| `REVERB_PORT` | Port the browser connects to |
-| `REVERB_SCHEME` | `http` in local, `https` behind TLS |
-| `REVERB_SERVER_HOST` | Host the websocket binds on, `0.0.0.0` in a container |
-| `REVERB_SERVER_PORT` | Port the websocket listens on |
-| `REVERB_PUBLISH_HOST` | Where the server pushes events, the websocket container. Falls back on `REVERB_HOST` |
-| `REVERB_PUBLISH_PORT` | Same, falls back on `REVERB_PORT` |
-| `REVERB_PUBLISH_SCHEME` | Same, `http` inside the network even when the browser is on `https` |
-| `VITE_REVERB_APP_KEY` | `REVERB_APP_KEY`, baked into the front at build time |
-| `VITE_REVERB_HOST` | `REVERB_HOST`, baked into the front at build time |
-| `VITE_REVERB_PORT` | `REVERB_PORT`, baked into the front at build time |
-| `VITE_REVERB_SCHEME` | `REVERB_SCHEME`, baked into the front at build time |
+| `QUEUE_CONNECTION` | `sync`, the scheduled commands run their jobs themselves |
 
-## Websocket
+## Scheduled commands
 
-The bookmark import sends its progress over a websocket, with Reverb.
+Everything slow happens there, nothing is queued while a user waits.
 
-1. Fill the `REVERB_APP_*` credentials, they only have to match between the server and the client.
-2. Keep `BROADCAST_CONNECTION=reverb` and the `VITE_REVERB_*` variables mapped on the `REVERB_*` ones.
-   The websocket runs in its own container, so the server pushes to `REVERB_PUBLISH_HOST`
-   while the browser connects to `REVERB_HOST`. Both composes set it already.
-3. `just run` starts the websocket and the worker as containers, `just reverb` and `just queue` follow their logs.
+| Command | When | What |
+| --- | --- | --- |
+| `newsletters:sync-catalog` | 1st of the month | Fills the catalog from awesome-newsletters |
+| `newsletters:sync-logos` | 2nd of the month | Looks for the logo and the feed of the newest entries |
+| `bookmarks:sync-icons` | Every Monday | Looks for the icons of the imported tags and links |
+
+In local, `just schedule` runs them. In production, either a cron on
+`php artisan schedule:run` every minute, or one scheduled task per command.
