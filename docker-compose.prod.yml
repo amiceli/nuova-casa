@@ -1,0 +1,99 @@
+services:
+    # frankenphp only serves http, the websocket and the worker are the same image
+    web:
+        build:
+            context: .
+            args:
+                VITE_REVERB_APP_KEY: '${VITE_REVERB_APP_KEY}'
+                VITE_REVERB_HOST: '${VITE_REVERB_HOST}'
+                VITE_REVERB_PORT: '${VITE_REVERB_PORT}'
+                VITE_REVERB_SCHEME: '${VITE_REVERB_SCHEME}'
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            REVERB_PUBLISH_HOST: websocket
+            REVERB_PUBLISH_PORT: '${REVERB_SERVER_PORT:-8085}'
+            REVERB_PUBLISH_SCHEME: http
+        expose:
+            - '8000'
+        depends_on:
+            - pgsql
+    # carries the progress of the bookmark import
+    websocket:
+        build:
+            context: .
+            args:
+                VITE_REVERB_APP_KEY: '${VITE_REVERB_APP_KEY}'
+                VITE_REVERB_HOST: '${VITE_REVERB_HOST}'
+                VITE_REVERB_PORT: '${VITE_REVERB_PORT}'
+                VITE_REVERB_SCHEME: '${VITE_REVERB_SCHEME}'
+        command: 'php artisan reverb:start --host=0.0.0.0 --port=${REVERB_SERVER_PORT:-8085}'
+        restart: unless-stopped
+        env_file:
+            - .env
+        expose:
+            - '${REVERB_SERVER_PORT:-8085}'
+        depends_on:
+            - pgsql
+    # the bookmark import and its icon lookups run here
+    worker:
+        build:
+            context: .
+            args:
+                VITE_REVERB_APP_KEY: '${VITE_REVERB_APP_KEY}'
+                VITE_REVERB_HOST: '${VITE_REVERB_HOST}'
+                VITE_REVERB_PORT: '${VITE_REVERB_PORT}'
+                VITE_REVERB_SCHEME: '${VITE_REVERB_SCHEME}'
+        command: 'php artisan queue:work --tries=3'
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            REVERB_PUBLISH_HOST: websocket
+            REVERB_PUBLISH_PORT: '${REVERB_SERVER_PORT:-8085}'
+            REVERB_PUBLISH_SCHEME: http
+        depends_on:
+            - pgsql
+    # fills the newsletter catalog
+    scheduler:
+        build:
+            context: .
+            args:
+                VITE_REVERB_APP_KEY: '${VITE_REVERB_APP_KEY}'
+                VITE_REVERB_HOST: '${VITE_REVERB_HOST}'
+                VITE_REVERB_PORT: '${VITE_REVERB_PORT}'
+                VITE_REVERB_SCHEME: '${VITE_REVERB_SCHEME}'
+        command: 'php artisan schedule:work'
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            REVERB_PUBLISH_HOST: websocket
+            REVERB_PUBLISH_PORT: '${REVERB_SERVER_PORT:-8085}'
+            REVERB_PUBLISH_SCHEME: http
+        depends_on:
+            - pgsql
+    pgsql:
+        image: 'postgres:17'
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD}'
+        volumes:
+            - 'casa-pgsql:/var/lib/postgresql/data'
+        healthcheck:
+            test:
+                - CMD
+                - pg_isready
+                - '-q'
+                - '-d'
+                - '${DB_DATABASE}'
+                - '-U'
+                - '${DB_USERNAME}'
+            retries: 3
+            timeout: 5s
+volumes:
+    casa-pgsql:
+        driver: local
