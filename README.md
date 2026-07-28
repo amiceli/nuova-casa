@@ -12,20 +12,20 @@ An opinionated tool for managing bookmarks and newsletters built with Laravel an
 
 ## Features
 
-- [x] Sign in with GitHub
-- [x] Profile and appearance settings
-- [x] Create and delete tags
-- [x] Create and delete bookmarks
-- [x] Auto fill bookmarks from Open Graph metadata
-- [x] Search an icon with SearXNG
-- [x] Mark a bookmark as favorite
-- [x] Dashboard of favorite bookmarks
-- [x] Search bookmarks by title or URL
-- [x] Add RSS feeds and read their latest article
-- [x] Search a newsletter in a catalog filled from [awesome-newsletters](https://github.com/zudochkin/awesome-newsletters)
-- [x] Know if a newsletter is read or unread
-- [x] Onboarding
-- [x] Import the bookmarks exported from a browser
+- Sign in with GitHub
+- Profile and appearance settings
+- Create and delete tags
+- Create and delete bookmarks
+- Auto fill bookmarks from Open Graph metadata
+- Search an icon with SearXNG
+- Mark a bookmark as favorite
+- Dashboard of favorite bookmarks
+- Search bookmarks by title or URL
+- Add RSS feeds and read their latest article
+- Search a newsletter in a catalog filled from [awesome-newsletters](https://github.com/zudochkin/awesome-newsletters)
+- Know if a newsletter is read or unread
+- Onboarding
+- Import the bookmarks exported from a browser
 
 ## Run project
 
