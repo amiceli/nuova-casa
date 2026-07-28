@@ -7,27 +7,21 @@ init:
     ./vendor/bin/sail artisan db:seed
     just run
 
-# run with sail, vite, the queue worker and the websocket server
+# run everything with sail, vite, the queue worker and the websocket included
 run:
     ./vendor/bin/sail up -d
-    tmux new-session -d -s "casa"
-    tmux send-keys -t "casa" "just vite" ENTER
-    tmux new-window -t "casa" -n "queue"
-    tmux send-keys -t "casa:queue" "just queue" ENTER
-    tmux new-window -t "casa" -n "reverb"
-    tmux send-keys -t "casa:reverb" "just reverb" ENTER
 
-# Run front with vite
+# Follow vite, it serves the front in dev
 vite:
-  ./vendor/bin/sail npm run dev
+  ./vendor/bin/sail logs -f vite
 
-# Run the queue worker, the bookmark import runs on it
+# Follow the queue worker, the bookmark import runs on it
 queue:
-    ./vendor/bin/sail artisan queue:work --tries=3
+    ./vendor/bin/sail logs -f worker
 
-# Run the websocket server, it carries the bookmark import progress
+# Follow the websocket server, it carries the bookmark import progress
 reverb:
-    ./vendor/bin/sail artisan reverb:start --debug
+    ./vendor/bin/sail logs -f reverb
 
 # Lint front code with biome
 biome:
