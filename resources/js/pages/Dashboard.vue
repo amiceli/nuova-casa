@@ -6,12 +6,11 @@
             variant="info"
         >
             {{ t('dashboard.empty') }}
-            <AddTagButton
-                slot="actions"
-                :light="true"
-            >
-                {{ t('common.createNew') }}
-            </AddTagButton>
+            <!-- AddTagButton renders the modal next to the button, so the slot
+                 has to sit on a real element for nord-banner to place it -->
+            <div slot="actions">
+                <AddTagButton :light="true" />
+            </div>
         </nord-banner>
         <div class="n-grid-3 n-gap-m">
             <PageCard
