@@ -1,77 +1,105 @@
 <template>
     <Head :title="t('onboarding.title')" />
 
-    <nord-stack
-        class="onboarding"
-        gap="l"
-        align-items="center"
-    >
-        <nord-card padding="l">
+    <nord-layout hide-default-nav-toggle>
+        <nord-top-bar slot="top-bar">
             <nord-stack
-                slot="header"
                 direction="horizontal"
-                gap="m"
+                gap="s"
                 align-items="center"
-                justify-content="space-between"
             >
-                <h1 class="n-typescale-l">{{ t(currentTitle) }}</h1>
-                <nord-badge>
-                    {{ t('onboarding.stepCount', { current: stepNumber, total: totalSteps }) }}
-                </nord-badge>
+                <img
+                    class="brand-logo"
+                    :src="logo"
+                    alt="Nuova casa"
+                />
+                <strong class="brand-name n-typescale-l">{{ t('brand') }}</strong>
             </nord-stack>
-
-            <WelcomeStep v-if="step === OnboardingStep.Welcome" />
-            <ImportBookmarks v-else-if="step === OnboardingStep.Bookmarks" />
-            <ThemeStep v-else-if="step === OnboardingStep.Theme" />
-            <NewslettersStep v-else />
-
             <nord-stack
-                slot="footer"
+                slot="end"
                 direction="horizontal"
-                gap="m"
+                gap="s"
                 align-items="center"
-                justify-content="space-between"
             >
-                <nord-button
-                    :disabled="step === OnboardingStep.Welcome"
-                    @click="store.goToPreviousStep()"
-                >
-                    {{ t('onboarding.previous') }}
+                <nord-button @click="logout()">
+                    {{ t('nav.logout') }}
                 </nord-button>
+            </nord-stack>
+        </nord-top-bar>
+
+        <nord-stack
+            class="onboarding"
+            gap="l"
+        >
+            <nord-card padding="l">
+                <nord-stack
+                    slot="header"
+                    direction="horizontal"
+                    gap="m"
+                    align-items="center"
+                    justify-content="space-between"
+                >
+                    <h1 class="n-typescale-l">{{ t(currentTitle) }}</h1>
+                    <nord-badge>
+                        {{ t('onboarding.stepCount', { current: stepNumber, total: totalSteps }) }}
+                    </nord-badge>
+                </nord-stack>
+
+                <WelcomeStep v-if="step === OnboardingStep.Welcome" />
+                <ImportBookmarks v-else-if="step === OnboardingStep.Bookmarks" />
+                <ThemeStep v-else-if="step === OnboardingStep.Theme" />
+                <NewslettersStep v-else />
 
                 <nord-stack
+                    slot="footer"
                     direction="horizontal"
-                    gap="s"
+                    gap="m"
                     align-items="center"
+                    justify-content="space-between"
                 >
                     <nord-button
-                        v-if="step !== OnboardingStep.Welcome"
-                        @click="store.goToNextStep()"
+                        :disabled="step === OnboardingStep.Welcome"
+                        @click="store.goToPreviousStep()"
                     >
-                        {{ t('onboarding.skip') }}
+                        {{ t('onboarding.previous') }}
                     </nord-button>
-                    <nord-button
-                        variant="primary"
-                        :loading="isCompleting || isFollowing"
-                        @click="goToNextStep()"
-                    >
-                        {{ t(isLastStep ? 'onboarding.finish' : 'onboarding.next') }}
-                    </nord-button>
-                </nord-stack>
-            </nord-stack>
-        </nord-card>
-    </nord-stack>
 
-    <nord-toast-group></nord-toast-group>
+                    <nord-stack
+                        direction="horizontal"
+                        gap="s"
+                        align-items="center"
+                    >
+                        <nord-button
+                            v-if="step !== OnboardingStep.Welcome"
+                            @click="store.goToNextStep()"
+                        >
+                            {{ t('onboarding.skip') }}
+                        </nord-button>
+                        <nord-button
+                            variant="primary"
+                            :loading="isCompleting || isFollowing"
+                            @click="goToNextStep()"
+                        >
+                            {{ t(isLastStep ? 'onboarding.finish' : 'onboarding.next') }}
+                        </nord-button>
+                    </nord-stack>
+                </nord-stack>
+            </nord-card>
+        </nord-stack>
+
+        <nord-toast-group></nord-toast-group>
+    </nord-layout>
 </template>
 
 <script
     lang="ts"
     setup
 >
-import { Head } from "@inertiajs/vue3"
+import logo from "@assets/casa-logo.webp"
+import { Head, router } from "@inertiajs/vue3"
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
+import { route } from "ziggy-js"
 import ImportBookmarks from "@/modules/import/components/ImportBookmarks.vue"
 import NewslettersStep from "@/modules/onboarding/components/NewslettersStep.vue"
 import ThemeStep from "@/modules/onboarding/components/ThemeStep.vue"
@@ -109,11 +137,26 @@ async function goToNextStep() {
 
     store.complete()
 }
+
+function logout() {
+    router.post(route("logout"))
+}
 </script>
 
 <style scoped>
+.brand-logo {
+    height: 32px;
+    width: 32px;
+    border-radius: var(--n-border-radius);
+    object-fit: cover;
+}
+
+.brand-name {
+    color: #fff;
+}
+
 .onboarding {
-    max-width: 46rem;
+    max-width: 64rem;
     margin: var(--n-space-xl) auto;
     padding: var(--n-space-m);
 }
