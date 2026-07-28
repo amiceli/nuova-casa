@@ -8,9 +8,9 @@ use App\Models\User;
 
 class BookmarkImporter {
     /**
-     * Placeholder until the jobs find something better with SearXNG.
+     * Placeholder until the weekly command finds something better with SearXNG.
      */
-    private const FALLBACK_ICON = 'resources/assets/404_retro.png';
+    public const FALLBACK_ICON = 'resources/assets/404_retro.png';
 
     private const MAX_TITLE_LENGTH = 255;
 

@@ -17,3 +17,8 @@ Schedule::command('newsletters:sync-catalog')
 Schedule::command('newsletters:sync-logos --limit=50')
     ->monthlyOn(2, '03:00')
     ->withoutOverlapping();
+
+// what the imports left with the fallback icon
+Schedule::command('bookmarks:sync-icons --limit=50')
+    ->weeklyOn(1, '04:00')
+    ->withoutOverlapping();
