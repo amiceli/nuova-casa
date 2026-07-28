@@ -49,7 +49,10 @@
                         :alt="item.name"
                         @error="onIconError(item.id)"
                     />
-                    <nord-stack gap="xs">
+                    <nord-stack
+                        gap="xs"
+                        class="suggestion-text"
+                    >
                         <span class="n-truncate n-typescale-m">{{ item.name }}</span>
                         <span
                             class="n-typescale-s n-color-text-weaker n-truncate"
@@ -66,9 +69,11 @@
                     gap="s"
                     align-items="center"
                 >
-                    <nord-badge :variant="isSelected(item) ? 'highlight' : undefined">
-                        {{ isSelected(item) ? t('onboarding.newsletters.selected') : t('onboarding.newsletters.select') }}
-                    </nord-badge>
+                    <nord-toggle
+                        :checked="isSelected(item)"
+                        :label="isSelected(item) ? t('onboarding.newsletters.selected') : t('onboarding.newsletters.select')"
+                        @click.stop="store.toggle(item.id)"
+                    ></nord-toggle>
                 </nord-stack>
             </nord-card>
         </div>
@@ -118,7 +123,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/*
+ * A grid item and a flex child both keep their content width by default, so a
+ * long name pushes the card past its column. Letting them shrink is what makes
+ * n-truncate work.
+ */
 .suggestion {
     cursor: pointer;
+    min-width: 0;
+}
+
+.suggestion-text {
+    min-width: 0;
 }
 </style>
