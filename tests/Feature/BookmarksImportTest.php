@@ -33,6 +33,8 @@ test('the folders of an export become tags, and the links land in them', functio
 
     expect($tags)->toContain('Dev')
         ->and($tags)->toContain('Dev / Front')
+        ->and($tags)->toContain('Dev / Front / Vue')
+        ->and($tags)->toContain('Docs / Frameworks / Astro')
         ->and($tags)->toContain('Favoris');
 
     $front = Tag::where('user_id', $user->id)->where('name', 'Dev / Front')->first();
@@ -51,10 +53,10 @@ test('an import answers with what it created before looking for any icon', funct
 
     $response->assertStatus(200);
     $response->assertJson(array(
-        'tags' => 3,
-        'pages' => 6,
+        'tags' => 17,
+        'pages' => 55,
         'skipped' => 0,
-        'total' => 9,
+        'total' => 72,
     ));
 });
 
@@ -69,7 +71,7 @@ test('every imported tag and link gets a job looking for its icon', function () 
         $tagJobs = $batch->jobs->filter(fn ($job) => $job instanceof FindTagIcon);
         $pageJobs = $batch->jobs->filter(fn ($job) => $job instanceof FindPageIcon);
 
-        return $tagJobs->count() === 3 && $pageJobs->count() === 6;
+        return $tagJobs->count() === 17 && $pageJobs->count() === 55;
     });
 });
 
@@ -83,8 +85,8 @@ test('an import can be replayed without doubling anything', function () {
 
     $response->assertJson(array('tags' => 0, 'pages' => 0, 'total' => 0));
 
-    expect(Tag::where('user_id', $user->id)->count())->toBe(3)
-        ->and(Page::where('user_id', $user->id)->count())->toBe(6);
+    expect(Tag::where('user_id', $user->id)->count())->toBe(17)
+        ->and(Page::where('user_id', $user->id)->count())->toBe(55);
 });
 
 test('two users importing the same bookmarks keep their own tags', function () {
@@ -96,8 +98,8 @@ test('two users importing the same bookmarks keep their own tags', function () {
     importBookmarks($first);
     importBookmarks($second);
 
-    expect(Tag::where('user_id', $first->id)->count())->toBe(3)
-        ->and(Tag::where('user_id', $second->id)->count())->toBe(3);
+    expect(Tag::where('user_id', $first->id)->count())->toBe(17)
+        ->and(Tag::where('user_id', $second->id)->count())->toBe(17);
 });
 
 test('a file holding no bookmark is turned down', function () {
