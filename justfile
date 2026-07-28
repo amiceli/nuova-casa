@@ -7,21 +7,15 @@ init:
     ./vendor/bin/sail artisan db:seed
     just run
 
-# run everything with sail, vite, the queue worker and the websocket included
+# run everything, the containers then vite in a tmux session
 run:
     ./vendor/bin/sail up -d
+    tmux new-session -d -s "casa"
+    tmux send-keys -t "casa" "just vite" ENTER
 
-# Follow vite, it serves the front in dev
+# Serve the front in dev
 vite:
-  ./vendor/bin/sail logs -f vite
-
-# Follow the queue worker, the bookmark import runs on it
-queue:
-    ./vendor/bin/sail logs -f worker
-
-# Follow the websocket server, it carries the bookmark import progress
-reverb:
-    ./vendor/bin/sail logs -f reverb
+    ./vendor/bin/sail npm run dev
 
 # Lint front code with biome
 biome:
@@ -52,6 +46,15 @@ schedule:
 sync_newsletters:
     ./vendor/bin/sail artisan newsletters:sync-catalog
     ./vendor/bin/sail artisan newsletters:sync-logos --limit=300
+
+# Look for the icons the imports left with the fallback one
+sync_icons:
+    ./vendor/bin/sail artisan bookmarks:sync-icons --limit=300
+
+# Run every scheduled command right now, without waiting for its day
+sync_all:
+    just sync_newsletters
+    just sync_icons
 
 # Open admin
 go_adminer:
