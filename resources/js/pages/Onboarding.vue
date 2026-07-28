@@ -52,6 +52,7 @@
 
                 <nord-stack
                     slot="footer"
+                    class="onboarding-actions"
                     direction="horizontal"
                     gap="m"
                     align-items="center"
@@ -153,6 +154,10 @@ function logout() {
 
 .brand-name {
     color: #fff;
+}
+
+.onboarding-actions {
+    margin-block-start: var(--n-space-l);
 }
 
 .onboarding {
