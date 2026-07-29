@@ -10,7 +10,7 @@
             :key="tab.value"
             :variant="isCurrent(tab) ? 'primary' : 'default'"
             :aria-pressed="isCurrent(tab)"
-            @click="updateAppearance(tab.value)"
+            @click="selectTheme(tab.value)"
         >
             <nord-icon
                 slot="start"
@@ -26,7 +26,8 @@
     setup
 >
 import { useI18n } from "vue-i18n"
-import { type Appearance, useAppearance } from "@/composables/useAppearance"
+import { type Appearance } from "@/composables/useAppearance"
+import { useThemePreference } from "@/composables/useThemePreference"
 
 interface AppearanceTab {
     value: Appearance
@@ -34,7 +35,7 @@ interface AppearanceTab {
     label: string
 }
 
-const { appearance, updateAppearance } = useAppearance()
+const { appearance, selectTheme } = useThemePreference()
 const { t } = useI18n()
 
 const tabs: AppearanceTab[] = [

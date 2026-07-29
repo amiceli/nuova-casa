@@ -34,6 +34,30 @@ export type Tag = {
     children: Array<Pick<Page, "id" | "icon" | "title" | "url" | "favorite" | "created_at">>
 }
 
+export enum ImportError {
+    FileRequired = "import_file_required",
+    FileInvalid = "import_file_invalid",
+    FileTooLarge = "import_file_too_large",
+    NoBookmarkFound = "import_no_bookmark_found",
+    UploadFailed = "import_upload_failed",
+}
+
+export enum ThemeError {
+    Required = "theme_required",
+    Invalid = "theme_invalid",
+    SaveFailed = "theme_save_failed",
+}
+
+/**
+ * What the server answers once the tags and the links are in place, their
+ * icons are looked for later by the weekly command.
+ */
+export type ImportResult = {
+    tags: number
+    pages: number
+    skipped: number
+}
+
 export enum NewsletterError {
     UrlRequired = "newsletter_url_required",
     AlreadyFollowed = "newsletter_already_followed",

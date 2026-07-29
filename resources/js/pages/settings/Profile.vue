@@ -33,6 +33,17 @@
                 </nord-stack>
             </nord-card>
 
+            <nord-card>
+                <h2
+                    slot="header"
+                    class="n-typescale-l"
+                >
+                    {{ t('import.title') }}
+                </h2>
+
+                <ImportBookmarks />
+            </nord-card>
+
             <DeleteUser />
         </SettingsLayout>
     </AppLayout>
@@ -44,6 +55,7 @@ import { useI18n } from "vue-i18n"
 import DeleteUser from "@/components/DeleteUser.vue"
 import AppLayout from "@/layouts/AppLayout.vue"
 import SettingsLayout from "@/layouts/settings/Layout.vue"
+import ImportBookmarks from "@/modules/import/components/ImportBookmarks.vue"
 import { type BreadcrumbItem, type User } from "@/types"
 
 interface Props {

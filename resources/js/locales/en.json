@@ -1,4 +1,5 @@
 {
+    "brand": "Nuova casa",
     "common": {
         "edit": "Edit",
         "save": "Save",
@@ -25,7 +26,16 @@
         "newsletter_already_followed": "You already follow this newsletter.",
         "newsletter_feed_not_found": "No rss feed found for this newsletter, type it manually.",
         "newsletter_catalog_load_failed": "Could not load the newsletter list, try again.",
-        "newsletter_save_failed": "Could not add this newsletter, try again."
+        "newsletter_save_failed": "Could not add this newsletter, try again.",
+        "newsletter_pick_required": "Pick at least one newsletter.",
+        "import_file_required": "Pick the bookmark file your browser exported.",
+        "import_file_invalid": "This file is not a bookmark export, it must be an HTML file.",
+        "import_file_too_large": "This file is too heavy, the limit is 10 MB.",
+        "import_no_bookmark_found": "No bookmark found in this file.",
+        "import_upload_failed": "Could not import this file, try again.",
+        "theme_required": "Pick a theme.",
+        "theme_invalid": "This theme is invalid.",
+        "theme_save_failed": "Could not save this theme, try again."
     },
     "nav": {
         "dashboard": "Dashboard",
@@ -41,7 +51,8 @@
     },
     "dashboard": {
         "title": "Dashboard",
-        "empty": "Your tag list is empty"
+        "empty": "Your tag list is empty",
+        "noFavorite": "None of your links is a favorite yet, star one to see it here"
     },
     "tags": {
         "title": "Tags",
@@ -105,6 +116,51 @@
         "foundLinks": "Found {count} link(s)",
         "emptyTitle": "No link found",
         "emptyText": "No link matches \"{value}\", neither by name nor by url."
+    },
+    "onboarding": {
+        "title": "Welcome",
+        "stepCount": "Step {current} of {total}",
+        "next": "Continue",
+        "previous": "Back",
+        "skip": "Skip this step",
+        "finish": "Finish",
+        "welcome": {
+            "title": "Welcome to nuova casa",
+            "hello": "Hello {name} 👋",
+            "text": "A few steps to make the house yours. Skip the ones you do not care about.",
+            "bookmarks": "Import the bookmarks of your browser",
+            "theme": "Pick the theme of the application",
+            "newsletters": "Follow a few newsletters"
+        },
+        "bookmarks": {
+            "title": "Import your bookmarks"
+        },
+        "theme": {
+            "title": "Pick your theme",
+            "text": "The theme follows you from a browser to the next. It follows your system by default."
+        },
+        "newsletters": {
+            "title": "Follow newsletters",
+            "text": "Pick the newsletters you are interested in, you can add more later.",
+            "loading": "Loading newsletters…",
+            "select": "Select",
+            "selected": "Selected",
+            "follow": "Follow {name}",
+            "count": "{count} newsletter(s) selected",
+            "emptyTitle": "No newsletter to suggest",
+            "emptyText": "The catalog is empty for now, you can add newsletters from the newsletters page."
+        }
+    },
+    "import": {
+        "title": "Import your bookmarks",
+        "help": "Export your bookmarks from your browser as an HTML file, then drop it here. Your folders become tags and your links land in them.",
+        "iconsLater": "Your tags and links start with a placeholder icon. A weekly task looks for a better one, so they fill in on their own over the following days.",
+        "defaultTag": "Bookmarks",
+        "pickFile": "Pick a file",
+        "noFile": "No file picked",
+        "start": "Import",
+        "done": "Import over: {tags} tag(s) and {pages} link(s) added.",
+        "skipped": "{count} link(s) skipped, their address was too long."
     },
     "settings": {
         "profileTitle": "Profile",

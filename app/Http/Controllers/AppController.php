@@ -3,52 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Models\Tag;
+use App\Services\IconFinder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 class AppController extends Controller {
+    /**
+     * An empty dashboard means either an empty account or no favorite yet,
+     * the front tells them apart to say the right thing.
+     */
     public function dashboard() {
-        $pages = Page::where('user_id', auth()->user()->id)
+        $userId = auth()->user()->id;
+
+        $pages = Page::where('user_id', $userId)
             ->where('favorite', true)
             ->orderBy('created_at', 'asc')
             ->get();
 
         return Inertia::render('Dashboard', array(
             'pages' => $pages,
+            'hasTags' => Tag::where('user_id', $userId)->exists(),
         ));
     }
 
-    private function searchWord(string $word) {
-        $url = env('SEARXNG_URL');
-
-        $response = Http::withHeaders(array(
-            'User-Agent' => 'Mozilla/5.0',
-        ))->get("$url/search", array(
-            'q' => "$word logo",
-            'categories' => 'images',
-            'format' => 'json',
-        ));
-
-        $imageUrls = array_map(
-            function ($item) {
-                return $item['img_src'];
-            },
-            array_slice($response['results'], 0, 25)
-        );
-
-        return $imageUrls;
-    }
-
-    public function searXng(FormRequest $request) {
+    public function searXng(FormRequest $request, IconFinder $finder) {
         $data = $request->validate(array(
             'name' => array('required', 'string'),
         ));
-        $imageUrls = $this->searchWord($data['name']);
 
         return response()->json(array(
-            'images' => $imageUrls,
+            'images' => $finder->search($data['name']),
         ));
     }
 

@@ -41,6 +41,10 @@ return array(
         'redirect' => env('GITHUB_REDIRECT'),
     ),
 
+    'searxng' => array(
+        'url' => env('SEARXNG_URL'),
+    ),
+
     'awesome_newsletters' => array(
         'readme_url' => env(
             'AWESOME_NEWSLETTERS_README_URL',

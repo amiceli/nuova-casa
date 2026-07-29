@@ -7,15 +7,15 @@ init:
     ./vendor/bin/sail artisan db:seed
     just run
 
-# run with sail
+# run everything, the containers then vite in a tmux session
 run:
     ./vendor/bin/sail up -d
     tmux new-session -d -s "casa"
     tmux send-keys -t "casa" "just vite" ENTER
 
-# Run front with vite
+# Serve the front in dev
 vite:
-  ./vendor/bin/sail npm run dev
+    ./vendor/bin/sail npm run dev
 
 # Lint front code with biome
 biome:
@@ -47,6 +47,15 @@ sync_newsletters:
     ./vendor/bin/sail artisan newsletters:sync-catalog
     ./vendor/bin/sail artisan newsletters:sync-logos --limit=300
 
+# Look for the icons the imports left with the fallback one
+sync_icons:
+    ./vendor/bin/sail artisan bookmarks:sync-icons --limit=300
+
+# Run every scheduled command right now, without waiting for its day
+sync_all:
+    just sync_newsletters
+    just sync_icons
+
 # Open admin
 go_adminer:
     open "http://localhost:8080/?server=pgsql&username=sail&db=laravel"
@@ -55,9 +64,18 @@ go_adminer:
 generate:
     ./vendor/bin/sail artisan key:generate
 
-# Seed DB
+# Seed DB, the user ends up with everything set up
 seed:
     ./vendor/bin/sail artisan db:seed
+
+# Seed a user who has never been through the onboarding, their tags, links and
+# newsletters are emptied first. Accounts and the newsletter catalog are kept.
+seed_fresh:
+    ./vendor/bin/sail artisan db:seed --class=FreshUserSeeder
+
+# Seed a user who is done with the onboarding, with tags, links and newsletters
+seed_onboarded:
+    ./vendor/bin/sail artisan db:seed --class=OnboardedUserSeeder
 
 # Build front
 build:

@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-vue-next"
 import type { Config } from "ziggy-js"
+import type { Appearance } from "@/composables/useAppearance"
 
 export interface Auth {
     user: User
@@ -30,6 +31,8 @@ export interface User {
     name: string
     email: string
     avatar?: string
+    theme: Appearance
+    onboarding_completed_at: string | null
     email_verified_at: string | null
     created_at: string
     updated_at: string

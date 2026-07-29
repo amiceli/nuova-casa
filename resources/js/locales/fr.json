@@ -1,4 +1,5 @@
 {
+    "brand": "Nuova casa",
     "common": {
         "edit": "Modifier",
         "save": "Enregistrer",
@@ -25,7 +26,16 @@
         "newsletter_already_followed": "Vous suivez déjà cette newsletter.",
         "newsletter_feed_not_found": "Aucun flux RSS trouvé pour cette newsletter, saisissez-le à la main.",
         "newsletter_catalog_load_failed": "Impossible de charger la liste des newsletters, réessayez.",
-        "newsletter_save_failed": "Impossible d'ajouter cette newsletter, réessayez."
+        "newsletter_save_failed": "Impossible d'ajouter cette newsletter, réessayez.",
+        "newsletter_pick_required": "Choisissez au moins une newsletter.",
+        "import_file_required": "Choisissez le fichier de favoris exporté par votre navigateur.",
+        "import_file_invalid": "Ce fichier n'est pas un export de favoris, il doit être au format HTML.",
+        "import_file_too_large": "Ce fichier est trop lourd, la limite est de 10 Mo.",
+        "import_no_bookmark_found": "Aucun favori trouvé dans ce fichier.",
+        "import_upload_failed": "Impossible d'importer ce fichier, réessayez.",
+        "theme_required": "Choisissez un thème.",
+        "theme_invalid": "Ce thème est invalide.",
+        "theme_save_failed": "Impossible d'enregistrer ce thème, réessayez."
     },
     "nav": {
         "dashboard": "Tableau de bord",
@@ -41,7 +51,8 @@
     },
     "dashboard": {
         "title": "Tableau de bord",
-        "empty": "Votre liste de tags est vide"
+        "empty": "Votre liste de tags est vide",
+        "noFavorite": "Aucun de vos liens n'est en favori, mettez-en un en favori pour le voir ici"
     },
     "tags": {
         "title": "Tags",
@@ -105,6 +116,51 @@
         "foundLinks": "{count} lien(s) trouvé(s)",
         "emptyTitle": "Aucun lien trouvé",
         "emptyText": "Aucun lien ne correspond à « {value} », ni par son nom ni par son url."
+    },
+    "onboarding": {
+        "title": "Bienvenue",
+        "stepCount": "Étape {current} sur {total}",
+        "next": "Continuer",
+        "previous": "Retour",
+        "skip": "Passer cette étape",
+        "finish": "Terminer",
+        "welcome": {
+            "title": "Bienvenue dans nuova casa",
+            "hello": "Bonjour {name} 👋",
+            "text": "Quelques étapes pour que la maison soit à votre goût. Vous pouvez passer celles qui ne vous intéressent pas.",
+            "bookmarks": "Importer les favoris de votre navigateur",
+            "theme": "Choisir le thème de l'application",
+            "newsletters": "Vous abonner à quelques newsletters"
+        },
+        "bookmarks": {
+            "title": "Importer vos favoris"
+        },
+        "theme": {
+            "title": "Choisir votre thème",
+            "text": "Le thème vous suit d'un navigateur à l'autre. Par défaut, il suit celui de votre système."
+        },
+        "newsletters": {
+            "title": "Suivre des newsletters",
+            "text": "Sélectionnez les newsletters qui vous intéressent, vous pourrez en ajouter d'autres plus tard.",
+            "loading": "Chargement des newsletters…",
+            "select": "Sélectionner",
+            "selected": "Sélectionnée",
+            "follow": "Suivre {name}",
+            "count": "{count} newsletter(s) sélectionnée(s)",
+            "emptyTitle": "Aucune newsletter à proposer",
+            "emptyText": "Le catalogue est vide pour le moment, vous pourrez en ajouter depuis la page newsletters."
+        }
+    },
+    "import": {
+        "title": "Importer vos favoris",
+        "help": "Exportez vos favoris depuis votre navigateur au format HTML, puis déposez le fichier ici. Vos dossiers deviennent des tags et vos liens sont rangés dedans.",
+        "iconsLater": "Vos tags et vos liens démarrent avec une icône par défaut. Une tâche hebdomadaire en cherche une meilleure, elles se remplissent donc toutes seules les jours suivants.",
+        "defaultTag": "Favoris",
+        "pickFile": "Choisir un fichier",
+        "noFile": "Aucun fichier choisi",
+        "start": "Importer",
+        "done": "Import terminé : {tags} tag(s) et {pages} lien(s) ajoutés.",
+        "skipped": "{count} lien(s) ignoré(s), leur adresse était trop longue."
     },
     "settings": {
         "profileTitle": "Profil",

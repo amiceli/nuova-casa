@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FollowNewslettersRequest;
 use App\Http\Requests\MarkNewsletterAsReadRequest;
 use App\Http\Requests\StoreNewsletterRequest;
 use App\Models\AvailableNewsletter;
 use App\Models\Newsletter;
 use App\Services\SiteMetadataFinder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Vedmant\FeedReader\Facades\FeedReader;
 
@@ -69,14 +71,86 @@ class NewsletterController extends Controller {
      * Find the feed of a newsletter of the catalog, on demand.
      */
     public function feed(AvailableNewsletter $availableNewsletter, SiteMetadataFinder $finder) {
-        if (! $availableNewsletter->feed_url) {
-            $availableNewsletter->feed_url = $finder->findFeedUrl($availableNewsletter->url);
-            $availableNewsletter->save();
+        return response()->json(array(
+            'feedUrl' => $this->feedUrlOf(array(
+                'available' => $availableNewsletter,
+                'finder' => $finder,
+            )),
+        ));
+    }
+
+    /**
+     * Follow several newsletters of the catalog at once, which is what the
+     * onboarding proposes on its last step.
+     */
+    public function follow(FollowNewslettersRequest $request, SiteMetadataFinder $finder) {
+        $data = (object) $request->validated();
+        $userId = auth()->user()->id;
+        $followed = 0;
+        $skipped = 0;
+
+        foreach (AvailableNewsletter::whereIn('id', $data->ids)->get() as $available) {
+            $feedUrl = $this->feedUrlOf(array(
+                'available' => $available,
+                'finder' => $finder,
+            ));
+
+            // a catalog entry whose feed cannot be found is unfollowable
+            if (! $feedUrl) {
+                Log::warning('action=follow_newsletter, status=skipped, reason=no_feed', array(
+                    'id' => $available->id,
+                    'name' => $available->name,
+                ));
+
+                $skipped++;
+
+                continue;
+            }
+
+            $alreadyFollowed = Newsletter::where('user_id', $userId)
+                ->where(function ($query) use ($available, $feedUrl) {
+                    return $query
+                        ->where('available_newsletter_id', $available->id)
+                        ->orWhere('url', $feedUrl);
+                })
+                ->exists();
+
+            if ($alreadyFollowed) {
+                continue;
+            }
+
+            $news = new Newsletter();
+            $news->url = $feedUrl;
+            $news->title = $available->name;
+            $news->available_newsletter_id = $available->id;
+            $news->user_id = $userId;
+
+            $news->save();
+
+            $followed++;
         }
 
         return response()->json(array(
-            'feedUrl' => $availableNewsletter->feed_url,
+            'skipped' => $skipped,
+            'followed' => $followed,
         ));
+    }
+
+    /**
+     * The catalog is filled by a scheduled command, a newsletter it has not
+     * reached yet gets its feed looked for on the spot.
+     *
+     * @param  array{available: AvailableNewsletter, finder: SiteMetadataFinder}  $params
+     */
+    private function feedUrlOf(array $params): ?string {
+        $available = $params['available'];
+
+        if (! $available->feed_url) {
+            $available->feed_url = $params['finder']->findFeedUrl($available->url);
+            $available->save();
+        }
+
+        return $available->feed_url;
     }
 
     /**
