@@ -69,13 +69,15 @@ class ProfileController extends Controller {
     }
 
     private function bookmarkHtml($user, bool $styled = false): string {
+        if ($styled) {
+            return $this->styledBookmarkHtml($user);
+        }
+
         $html = array(
             '<!DOCTYPE NETSCAPE-Bookmark-file-1>',
             '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">',
             '<TITLE>Nuova casa bookmarks</TITLE>',
-            $styled
-                ? '<link rel="stylesheet" href="https://chr15m.github.io/DoodleCSS/doodle.css"><style>body { margin: 0; } main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }</style><body class="doodle"><main><H1>Nuova casa bookmarks</H1>'
-                : '<H1>Nuova casa bookmarks</H1>',
+            '<H1>Nuova casa bookmarks</H1>',
             '<DL><p>',
         );
 
@@ -98,9 +100,51 @@ class ProfileController extends Controller {
         }
 
         $html[] = '</DL><p>';
-        if ($styled) {
-            $html[] = '</main></body>';
+
+        return implode("\n", $html);
+    }
+
+    private function styledBookmarkHtml($user): string {
+        $html = array(
+            '<!DOCTYPE html>',
+            '<html lang="fr">',
+            '<head>',
+            '    <meta charset="UTF-8">',
+            '    <meta name="viewport" content="width=device-width, initial-scale=1">',
+            '    <title>Nuova casa bookmarks</title>',
+            '    <link rel="stylesheet" href="https://chr15m.github.io/DoodleCSS/doodle.css">',
+            '    <style>@import url("https://fonts.googleapis.com/css2?family=Short+Stack&display=swap"); body { margin: 0; font-family: "Short Stack", cursive; } main { max-width: 800px; margin: auto; padding: 1em; } fieldset { margin: 2em 0; } ul { padding-left: 1.5em; }</style>',
+            '</head>',
+            '<body class="doodle">',
+            '    <main>',
+            '        <h1>Nuova casa bookmarks</h1>',
+        );
+
+        foreach ($user->tags as $tag) {
+            $html[] = '        <fieldset>';
+            $html[] = '            <legend>'.e($tag->name).'</legend>';
+            $html[] = '            <ul>';
+            foreach ($tag->pages as $page) {
+                $html[] = '                <li><a href="'.e($page->url).'">'.e($page->title).'</a></li>';
+            }
+            $html[] = '            </ul>';
+            $html[] = '        </fieldset>';
         }
+
+        if ($user->newsletters->isNotEmpty()) {
+            $html[] = '        <fieldset>';
+            $html[] = '            <legend>Newsletters</legend>';
+            $html[] = '            <ul>';
+            foreach ($user->newsletters as $newsletter) {
+                $html[] = '                <li><a href="'.e($newsletter->url).'">'.e($newsletter->title).'</a></li>';
+            }
+            $html[] = '            </ul>';
+            $html[] = '        </fieldset>';
+        }
+
+        $html[] = '    </main>';
+        $html[] = '</body>';
+        $html[] = '</html>';
 
         return implode("\n", $html);
     }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Page;
+use App\Models\Tag;
 use App\Models\User;
 
 test('profile page is displayed', function () {
@@ -14,6 +16,18 @@ test('profile page is displayed', function () {
 
 test('user can export their data in three formats', function () {
     $user = User::factory()->create();
+    $tag = Tag::forceCreate(array(
+        'user_id' => $user->id,
+        'name' => 'Reading',
+        'icon' => 'bookmark',
+    ));
+    Page::forceCreate(array(
+        'user_id' => $user->id,
+        'tag_id' => $tag->id,
+        'title' => 'Example',
+        'url' => 'https://example.com',
+        'icon' => 'bookmark',
+    ));
 
     $this->actingAs($user)
         ->get('/settings/profile/export.json')
@@ -39,7 +53,10 @@ test('user can export their data in three formats', function () {
         ->assertOk()
         ->assertHeader('Content-Disposition', 'attachment; filename="nuova-casa-bookmarks-styled.html"')
         ->assertSee('https://chr15m.github.io/DoodleCSS/doodle.css', false)
-        ->assertSee('max-width: 900px', false);
+        ->assertSee('https://fonts.googleapis.com/css2?family=Short+Stack&display=swap', false)
+        ->assertSee('<fieldset>', false)
+        ->assertSee('<legend>', false)
+        ->assertSee('max-width: 800px', false);
 });
 
 test('user can delete their account', function () {
