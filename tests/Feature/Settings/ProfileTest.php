@@ -12,6 +12,29 @@ test('profile page is displayed', function () {
     $response->assertOk();
 });
 
+test('user can export their data in three formats', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get('/settings/profile/export.json')
+        ->assertOk()
+        ->assertHeader('Content-Disposition', 'attachment; filename="nuova-casa-export.json"')
+        ->assertJsonPath('user.email', $user->email);
+
+    $this->actingAs($user)
+        ->get('/settings/profile/export-browser.json')
+        ->assertOk()
+        ->assertHeader('Content-Disposition', 'attachment; filename="nuova-casa-bookmarks.json"')
+        ->assertJsonPath('version', 1)
+        ->assertJsonPath('roots.bookmark_bar.type', 'folder');
+
+    $this->actingAs($user)
+        ->get('/settings/profile/export.html')
+        ->assertOk()
+        ->assertHeader('Content-Disposition', 'attachment; filename="nuova-casa-bookmarks.html"')
+        ->assertSee('<!DOCTYPE NETSCAPE-Bookmark-file-1>', false);
+});
+
 test('user can delete their account', function () {
     $user = User::factory()->create();
 

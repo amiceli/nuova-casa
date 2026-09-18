@@ -44,6 +44,28 @@
                 <ImportBookmarks />
             </nord-card>
 
+            <nord-card>
+                <h2 slot="header" class="n-typescale-l">
+                    {{ t('settings.exportTitle') }}
+                </h2>
+                <nord-stack gap="m">
+                    <p class="n-color-text-weaker n-typescale-s">
+                        {{ t('settings.exportHelp') }}
+                    </p>
+                    <nord-stack direction="horizontal" gap="m" wrap>
+                        <nord-button href="/settings/profile/export.json">
+                            {{ t('settings.exportJson') }}
+                        </nord-button>
+                        <nord-button href="/settings/profile/export-browser.json">
+                            {{ t('settings.exportBrowser') }}
+                        </nord-button>
+                        <nord-button href="/settings/profile/export.html">
+                            {{ t('settings.exportHtml') }}
+                        </nord-button>
+                    </nord-stack>
+                </nord-stack>
+            </nord-card>
+
             <DeleteUser />
         </SettingsLayout>
     </AppLayout>
