@@ -125,7 +125,10 @@ class ProfileController extends Controller {
             $html[] = '            <legend>'.e($tag->name).'</legend>';
             $html[] = '            <ul>';
             foreach ($tag->pages as $page) {
-                $html[] = '                <li><a href="'.e($page->url).'">'.e($page->title).'</a></li>';
+                $favorite = $page->favorite
+                    ? '⭐️ '
+                    : '';
+                $html[] = '                <li><a href="'.e($page->url).'">'.$favorite.e($page->title).'</a></li>';
             }
             $html[] = '            </ul>';
             $html[] = '        </fieldset>';

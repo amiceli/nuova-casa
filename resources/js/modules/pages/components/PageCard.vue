@@ -92,16 +92,14 @@ function toggleFavorite() {
     form.put(route("update-page", { id: props.page.id }), {
         headers: { Accept: "application/json" },
         onSuccess: () => {
-            handler?.addToast({
+            handler?.addToast(t("pages.favoriteUpdated"), {
                 variant: "success",
-                message: t("pages.favoriteUpdated"),
                 autoDismiss: 4000,
             })
         },
         onError: () => {
-            handler?.addToast({
+            handler?.addToast(t("pages.favoriteFailed"), {
                 variant: "danger",
-                message: t("pages.favoriteFailed"),
                 autoDismiss: 4000,
             })
         },

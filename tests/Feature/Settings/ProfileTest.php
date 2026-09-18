@@ -27,6 +27,7 @@ test('user can export their data in three formats', function () {
         'title' => 'Example',
         'url' => 'https://example.com',
         'icon' => 'bookmark',
+        'favorite' => true,
     ));
 
     $this->actingAs($user)
@@ -56,6 +57,7 @@ test('user can export their data in three formats', function () {
         ->assertSee('https://fonts.googleapis.com/css2?family=Short+Stack&display=swap', false)
         ->assertSee('<fieldset>', false)
         ->assertSee('<legend>', false)
+        ->assertSee('⭐️ Example', false)
         ->assertSee('max-width: 800px', false);
 });
 

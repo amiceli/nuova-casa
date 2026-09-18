@@ -63,16 +63,14 @@ function removeTag() {
     router.delete(route("delete-tag", { id: props.tag.id }), {
         onSuccess: () => {
             isOpen.value = false
-            handler?.addToast({
+            handler?.addToast(t("tags.removed", { name: props.tag.name }), {
                 variant: "success",
-                message: t("tags.removed", { name: props.tag.name }),
                 autoDismiss: 4000,
             })
         },
         onError: () => {
-            handler?.addToast({
+            handler?.addToast(t("tags.removeFailed"), {
                 variant: "danger",
-                message: t("tags.removeFailed"),
                 autoDismiss: 4000,
             })
         },
