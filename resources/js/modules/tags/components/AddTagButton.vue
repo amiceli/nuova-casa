@@ -108,16 +108,14 @@ onMounted(() => {
 
     watch(status, (e: string) => {
         if (e === "failed") {
-            overlay?.addToast({
+            overlay?.addToast(errorMessage.value || t(`errors.${TagError.SaveFailed}`), {
                 variant: "danger",
-                message: errorMessage.value || t(`errors.${TagError.SaveFailed}`),
                 autoDismiss: 4000,
             })
         }
         if (e === "success") {
-            overlay?.addToast({
+            overlay?.addToast(t("tags.created"), {
                 variant: "success",
-                message: t("tags.created"),
                 autoDismiss: 4000,
             })
             isOpen.value = false

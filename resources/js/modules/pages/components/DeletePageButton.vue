@@ -66,16 +66,14 @@ function removePage() {
     router.delete(route("delete-page", { id: props.page.id }), {
         onSuccess: () => {
             isOpen.value = false
-            handler?.addToast({
+            handler?.addToast(t("pages.removed"), {
                 variant: "success",
-                message: t("pages.removed"),
                 autoDismiss: 4000,
             })
         },
         onError: () => {
-            handler?.addToast({
+            handler?.addToast(t("pages.removeFailed"), {
                 variant: "danger",
-                message: t("pages.removeFailed"),
                 autoDismiss: 4000,
             })
         },

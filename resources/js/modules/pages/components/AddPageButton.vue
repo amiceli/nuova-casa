@@ -158,16 +158,14 @@ onMounted(() => {
 
     watch(status, (e: string) => {
         if (e === "failed") {
-            overlay?.addToast({
+            overlay?.addToast(t("pages.saveFailed"), {
                 variant: "danger",
-                message: t("pages.saveFailed"),
                 autoDismiss: 4000,
             })
         }
         if (e === "success") {
-            overlay?.addToast({
+            overlay?.addToast(t("pages.saved"), {
                 variant: "success",
-                message: t("pages.saved"),
                 autoDismiss: 4000,
             })
             isOpen.value = false
