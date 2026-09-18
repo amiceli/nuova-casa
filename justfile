@@ -60,6 +60,10 @@ sync_all:
 go_adminer:
     open "http://localhost:8080/?server=pgsql&username=sail&db=laravel"
 
+# Open the local development app
+open:
+    open "http://localhost"
+
 # Generate a key with artisan
 generate:
     ./vendor/bin/sail artisan key:generate
