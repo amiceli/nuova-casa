@@ -59,8 +59,16 @@
                         <nord-button href="/settings/profile/export-browser.json">
                             {{ t('settings.exportBrowser') }}
                         </nord-button>
+                    </nord-stack>
+                    <p class="n-color-text-weaker n-typescale-s">
+                        {{ t('settings.exportHtmlTitle') }}
+                    </p>
+                    <nord-stack direction="horizontal" gap="m" wrap>
                         <nord-button href="/settings/profile/export.html">
                             {{ t('settings.exportHtml') }}
+                        </nord-button>
+                        <nord-button href="/settings/profile/export-styled.html">
+                            {{ t('settings.exportStyledHtml') }}
                         </nord-button>
                     </nord-stack>
                 </nord-stack>

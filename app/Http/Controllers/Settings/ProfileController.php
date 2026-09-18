@@ -58,11 +58,24 @@ class ProfileController extends Controller {
 
     public function exportHtml(Request $request): HttpResponse {
         $user = $request->user()->load(array('tags.pages', 'newsletters'));
+
+        return $this->download($this->bookmarkHtml($user), 'nuova-casa-bookmarks.html', 'text/html; charset=UTF-8');
+    }
+
+    public function exportStyledHtml(Request $request): HttpResponse {
+        $user = $request->user()->load(array('tags.pages', 'newsletters'));
+
+        return $this->download($this->bookmarkHtml($user, true), 'nuova-casa-bookmarks-styled.html', 'text/html; charset=UTF-8');
+    }
+
+    private function bookmarkHtml($user, bool $styled = false): string {
         $html = array(
             '<!DOCTYPE NETSCAPE-Bookmark-file-1>',
             '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">',
             '<TITLE>Nuova casa bookmarks</TITLE>',
-            '<H1>Nuova casa bookmarks</H1>',
+            $styled
+                ? '<link rel="stylesheet" href="https://chr15m.github.io/DoodleCSS/doodle.css"><style>body { margin: 0; } main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }</style><body class="doodle"><main><H1>Nuova casa bookmarks</H1>'
+                : '<H1>Nuova casa bookmarks</H1>',
             '<DL><p>',
         );
 
@@ -85,8 +98,11 @@ class ProfileController extends Controller {
         }
 
         $html[] = '</DL><p>';
+        if ($styled) {
+            $html[] = '</main></body>';
+        }
 
-        return $this->download(implode("\n", $html), 'nuova-casa-bookmarks.html', 'text/html; charset=UTF-8');
+        return implode("\n", $html);
     }
 
     private function download(string|false $content, string $filename, string $contentType): HttpResponse {

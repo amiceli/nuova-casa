@@ -33,6 +33,13 @@ test('user can export their data in three formats', function () {
         ->assertOk()
         ->assertHeader('Content-Disposition', 'attachment; filename="nuova-casa-bookmarks.html"')
         ->assertSee('<!DOCTYPE NETSCAPE-Bookmark-file-1>', false);
+
+    $this->actingAs($user)
+        ->get('/settings/profile/export-styled.html')
+        ->assertOk()
+        ->assertHeader('Content-Disposition', 'attachment; filename="nuova-casa-bookmarks-styled.html"')
+        ->assertSee('https://chr15m.github.io/DoodleCSS/doodle.css', false)
+        ->assertSee('max-width: 900px', false);
 });
 
 test('user can delete their account', function () {
